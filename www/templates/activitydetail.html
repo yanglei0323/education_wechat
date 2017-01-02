@@ -1,0 +1,43 @@
+<ion-view>
+<ion-header-bar class="bar-light bar bar-header" align-title="center">
+    <button ng-click="ionicBack()" class="button back-button buttons button-clear header-item">
+        <i class="icon ion-ios-arrow-left"></i>
+    </button>
+    <div class="title title-center header-item"><span>报名详情</span></div>
+</ion-header-bar>
+<ion-content class="y-simple-video">
+    <div class="y-actdetail-header">
+    	<div class="y-actdetail-img">
+    		<img src="./img/me/bm-bg.png" alt="">
+    		<div class="y-header-info">
+    			<span class="y-actdetail-title" ng-bind="activityDetailsInfo.activity.title"></span>
+    			<span class="y-actdetail-yzm">参会专属验证码</span>
+    			<span class="y-actdetail-cardnum" ng-bind="activityDetailsInfo.cardnum"></span>
+    		</div>
+    	</div>
+    </div>
+    <div class="y-office-info y-activity-special">
+    	<div class="y-office-icon flex align y-activity-special">
+    		<span class="y-icon-item flex align"><img ng-src="{{activityDetailsInfo.activity.imgurl}}" alt=""></span>
+    		<span class="y-icon-item flex align"><img src="./img/boutique/time-icon.png" alt=""></span>
+    		<span class="y-icon-item flex align"><img src="./img/boutique/place-icon.png" alt="" class="y-place-icon"></span>
+    		<span class="y-icon-item flex align">活动详情</span>
+    	</div>
+    	<div class="y-office-detail y-activity-special">
+			<div class="y-detail-item">
+				<span><span ng-bind="activityDetailsInfo.activity.name"></span></span>
+			</div>
+			<div class="y-detail-item">
+				<span ng-bind="activityDetailsInfo.activity.worktime"></span>
+			</div>
+			<div class="y-detail-item">
+				<span ng-bind="activityDetailsInfo.activity.position"></span>
+			</div>
+			<div class="y-detail-item y-detail-special" ng-click="goOfficeDetails(activityDetailsInfo)">
+				<img src="./img/boutique/right-icon.png" alt="">
+			</div>
+		</div>
+    </div>
+    
+</ion-content>
+</ion-view>

@@ -1,0 +1,37 @@
+ <ion-view hide-nav-bar="false" view-title="悦美课">
+    <ion-header-bar class="bar bar-header bar-light" align-title="center">
+        <div class="title title-center header-item">订阅</div>
+    </ion-header-bar>
+    <ion-content class="subscribed-bg">
+        <div class="subscribed-content">
+            <div class="no-subscribed" ng-if="showNoSubscribed">
+                <img ng-src="img/no_content.png" width="85">
+                <div class="no-content-text">暂无订阅</div>
+            </div>
+            <div class="no-subscribed" ng-if="showNoLogin">
+                <img ng-src="img/no_content.png" width="85">
+                <div class="no-content-text">登录后才能看到订阅</div>
+                <div class="btn-gologin" ng-click="goLogin()">登录</div>
+            </div>
+            <div class="subscribed" ng-if="showSubscribed">
+                <div class="subscribed-item" ng-repeat="subscribeditem in followTeacherList" ng-click="goinfo(subscribeditem.teacher.id)">
+                    <div class="subscribed-img">
+                        <img ng-src="{{subscribeditem.teacher.imgurl}}" alt="">
+                    </div>
+                    <div class="subscribed-text">
+                        <div class="subscribed-title">{{subscribeditem.teacher.name}}</div>
+                        <div class="subscribed-subtitle">
+                            <div class="">专栏订阅</div>
+                            <div class="subscribed-dividing-line">|</div>
+                            <div class="subscribed-time">{{subscribeditem.time}}</div>
+                        </div>
+                        <div class="clear"></div>
+                        <div class="subscribed-price">￥{{subscribeditem.teacher.price}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ion-infinite-scroll ng-if="!noMorePage" immediate-check="false" on-infinite="loadMore()" distance="1%" ></ion-infinite-scroll>
+        <div ng-if="noMorePageText" class="y-nomorepage">没有更多内容</div>
+    </ion-content>
+</ion-view>

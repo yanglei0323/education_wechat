@@ -1,0 +1,77 @@
+.y-boutique-content{
+	width:100%;
+	min-height:100vh;
+	padding-top:3px;
+	background:#ececec;
+	.item{
+		background:#ececec !important;
+		.y-office-icon{
+			position:absolute;
+			left:10px;
+			top:10px;
+			img{
+				width:22px;
+				height:18px;
+			    vertical-align: middle;
+			}
+			.y-office-status{
+				color:#f5a523;
+				font-size:10px;
+			}
+		}
+	}
+}
+.y-office-content{
+	margin-top:0 !important;
+}
+.y-curriculum-content{
+	width:100%;
+	min-height:100vh;
+	padding-top:3px;
+	background:#ececec;
+	.y-curriculum-item{
+		width:100%;
+		height:106px;
+		position:relative;
+		background:#fff;
+		border-bottom:1px solid #ececec;
+		.y-currImg{
+			width:75px;
+			height:75px;
+			position:absolute;
+			left:16px;
+			top:16px;
+		}
+		.y-currInfo{
+			position:absolute;
+			left:106px;
+			top:12px;
+			p{
+				margin:0 !important;
+			}
+			.curr-title{
+				font-size:14px;
+				line-height:34px;
+				color:#333;
+			}
+			.curr-teacherInfo{
+				font-size:12px;
+				line-height:22px;
+				color:#666;
+				.y-gd{
+					font-size:15px;
+					color:#dbdbdb;
+					margin:0 10px;
+				}
+			}
+			.curr-status{
+				font-size:12px;
+				line-height:22px;
+				color:#f5a523;
+				.curr-time{
+					margin-right:30px;
+				}
+			}
+		}
+	}
+}

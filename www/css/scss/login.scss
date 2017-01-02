@@ -1,0 +1,215 @@
+$floatDirection: right !default;
+.login-bg {
+	background: url(../img/login/bg.png) no-repeat;
+	background-size: 100% 100%;
+}
+.login-logo-div {
+	width: 100%;
+	height: 265px;
+}
+.login-input-div{
+    width: 100%;
+    height: 215px;
+}
+.pull-#{$floatDirection} {
+	float: $floatDirection;
+}
+.button-login {
+    display: block;
+    width: 300px;
+    height: 44px;
+    margin-top: 50px !important;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 14px;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+.get-checkcode {
+	font-size: 12px;
+	color: #ffffff;
+    padding: 0;
+    margin-top: 5px;
+    margin-right: 40px;
+}
+.input-telephone {
+    width: 300px;
+    height: 44px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 14px;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+.input-code {
+	margin-top: 2px;
+}
+.login-input {
+	text-align: center;
+    font-size: 14px;
+    color: #ffffff;
+}
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: #ffffff;
+}
+textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"] {
+    display: block;
+    padding-top: 2px;
+    padding-left: 0;
+    height: 34px;
+    color: #ffffff;
+    vertical-align: middle;
+    font-size: 14px;
+    line-height: 16px;
+}
+.icon-user {
+    width: 23px;
+    height: 23px;
+    background: url(../img/icon_user.png) no-repeat;
+    background-size: 23px;
+}
+.icon-pwd {
+    width: 23px;
+    height: 23px;
+    background: url(../img/icon_pwd.png) no-repeat;
+    background-size: 23px;
+}
+.quick-login {
+    /* display: none; */
+    width: 304px;
+    /* background-color: #ccc; */
+    height: 110px;
+    /* position: absolute; */
+    /* bottom: 0; */
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.login-line {
+    float: left;
+    width: 110px;
+    height: 1px;
+    background-color: #d8d8d8;
+    margin-top: 10px;
+}
+.quick-login-text {
+    float: left;
+    font-size: 10px;
+    color: #e2e2e2;
+    margin-left: 18px;
+    margin-right: 18px;
+}
+.quick-login-box {
+    margin-top: 20px;
+    width: 100%;
+    text-align: center;
+}
+.quick-login-button {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+}
+.icon-back {
+	width: 22px;
+    height: 22px;
+	background: url(../img/icon_back.png) no-repeat;
+	background-size: 30px;
+}
+.icon-wx {
+	background: url(../img/icon_wx.png) no-repeat;
+	background-size: 30px;
+    float: left;
+    margin-left: 50px;
+}
+.icon-weibo {
+	background: url(../img/icon_weibo.png) no-repeat;
+	background-size: 30px;
+}
+.icon-qq {
+	background: url(../img/icon_qq.png) no-repeat;
+	background-size: 30px;
+    float: right;
+    margin-right: 50px;
+}
+
+
+
+
+/* ---------binding-phone--------- */
+.binding-phone-bg {
+    background: #ececec;
+    padding-top: 10px;
+}
+.input-binding > input[type="text"]{
+  color: #999999;
+}
+.input-binding > input::-webkit-input-placeholder {
+  color: #999999;
+}
+.button-binding {
+    width: 300px;
+    height: 44px;
+    margin-top: 40px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 14px;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    background-color: #f5a523;
+}
+.input-telephone-binding {
+    width: 300px;
+    height: 44px;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 14px;
+    color: #999999;
+    border: none;
+    border-radius: 4px;
+    background-color: #ffffff;
+}
+.input-binding-box {
+    width: 300px;
+    height: 44px;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.input-code-binding {
+    float: left;
+    width: 150px;
+    height: 44px;
+    margin-top: 0;
+    font-size: 14px;
+    color: #999;
+    border: none;
+    border-radius: 4px;
+    background-color: #ffffff;
+}
+.get-checkcode-binding {
+    float: right;
+    width: 140px;
+    height: 44px;
+    line-height: 44px;
+    font-size: 14px;
+    text-align: center;
+    color: #ffffff;
+    padding: 0;
+    margin-left: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #f5a523;
+}
+.button-binding-submit {
+    width: 300px;
+    height: 44px;
+    margin-left: auto;
+    margin-right: auto;
+}

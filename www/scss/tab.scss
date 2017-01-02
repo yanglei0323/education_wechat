@@ -1,0 +1,45 @@
+.icon-micro-lesson {
+	background: url(../img/micro_lesson.png) no-repeat center;
+	background-size: 25px 25px;
+}
+
+.icon-micro-lesson-active {
+	background: url(../img/micro_lesson_active.png) no-repeat center;
+	background-size: 25px 25px;
+}
+
+.icon-subscribed {
+	background: url(../img/subscribed.png) no-repeat center;
+	background-size: 25px 25px;
+
+}
+.icon-subscribed-active {
+	background: url(../img/subscribed_active.png) no-repeat center;
+	background-size: 25px 25px;
+}
+
+.icon-offline-lesson {
+	background: url(../img/offline_lesson.png) no-repeat center;
+	background-size: 25px 25px;
+}
+
+.icon-offline-lesson-active {
+	background: url(../img/offline_lesson_active.png) no-repeat center;
+	background-size: 25px 25px;
+}
+
+.icon-me {
+	background: url(../img/me.png) no-repeat center;
+	background-size: 25px 25px;
+}
+
+.icon-me-active {
+	background: url(../img/me_active.png) no-repeat center;
+	background-size: 25px 25px;
+}
+
+ion-tabs.tabs-color-active-positive {
+	.tab-item.tab-item-active {
+		color: #f5a523 !important;
+	}
+}

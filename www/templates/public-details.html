@@ -1,0 +1,39 @@
+
+<ion-view hide-nav-bar="false" view-title="悦美课" class="y-view">
+    <ion-content class="y-simple-video">
+    	<!-- 视频模块 -->
+		<div class="y-video">
+	        <video ng-src="{{videoUrl(videoInfo.playurl)}}" controls loop poster="{{boutiDetailList.imgurl}}" id="playVideo"></video>
+	        <span class="y-back" ng-click="ionicBack()"><img src="./img/boutique/goback.png" alt=""></span>
+	        <span class="y-share" ng-click="goShare(boutiDetailList)"><img src="./img/boutique/share.png" alt=""></span>
+	        <span class="y-collection" ng-if="!boutiDetailList.iskeep" ng-click="keepDesigner(boutiDetailList)"><img src="./img/boutique/collection.png" alt=""></span>
+	        <span class="y-collection" ng-if="boutiDetailList.iskeep" ng-click="keepDesigner(boutiDetailList)"><img src="./img/boutique/k-collection.png" alt=""></span>
+	    </div>
+	    
+	    <!-- 订阅详情 -->
+	    <div class="y-page-1">
+	        <!-- 切换tab -->
+	        <div class="y-switch">
+	            <span ng-bind="boutiDetailList.name" class="y-class-title"></span>
+	        </div>
+	       <div class="y-subInfo">
+	            <span class="y-sub-title">导师简介</span>
+	            <span class="y-designer-info">
+	                <img ng-src="{{boutiDetailList.teacheravatar}}" alt="">
+	                <span ng-bind="boutiDetailList.teachername"></span>
+	                <span class="y-job-type" ng-bind="boutiDetailList.teacherjob"></span>
+	            </span>
+	        </div>
+	        <div class="y-describe">
+	            <span ng-bind="boutiDetailList.teacherdescribe"></span>
+	        </div>
+	        <span class="y-notice">课程介绍</span>
+	        <div class="y-describe y-notice-info">
+	            <p>1、课程时长：<span ng-bind="boutiDetailList.timelongs"></span></p>
+	            <p>2、观看人数：<span ng-bind="boutiDetailList.watchnum"></span></p>
+	            <p>3、上传时间：<span ng-bind="boutiDetailList.uploadtime"></span></p>
+	        </div> 
+	    </div>
+
+    </ion-content>
+</ion-view>

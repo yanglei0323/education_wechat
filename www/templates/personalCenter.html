@@ -1,0 +1,45 @@
+<ion-view>
+<ion-header-bar class="bar-light bar bar-header" align-title="center">
+    <button ng-click="ionicBack()" class="button back-button buttons button-clear header-item">
+        <i class="icon ion-ios-arrow-left"></i>
+    </button>
+    <div class="title title-center header-item"><span>个人中心</span></div>
+</ion-header-bar>
+<ion-content class="y-simple-video">
+	<!-- 头像 -->
+    <div class="y-percenter-headImg flex align">
+    	<img ng-src="{{userInfo.avatar}}" alt="" class="flex align" ng-click="addPhoto();">
+    </div>
+    <div class="content y-mt y-special-input">
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">昵称：</span>
+          <input type="text" ng-model="nickname" maxlength="20" class="nickname-input">
+        </label>
+        <label class="item item-input" ng-click="showSex()">
+          <span class="input-label">性别：</span>
+          <input type="text" ng-model="sexname" readOnly="true" class="sexflag-input">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">星座：</span>
+          <input type="text" ng-model="starname" readOnly="true" class="starflag-input" id="y-dateSelect">
+        </label>
+      </div>
+    </div>
+
+    <div class="content y-mt y-special-input">
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">公司：</span>
+          <input type="text" ng-model="company" maxlength="20" class="company-input">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">职业：</span>
+          <input type="text" ng-model="job" maxlength="20" class="job-input">
+        </label>
+      </div>
+    </div>
+
+    <div class="y-save-info" ng-click="goSaveInfo()">保存</div>
+</ion-content>
+</ion-view>

@@ -1,0 +1,31 @@
+<ion-view view-title="悦美课">
+<ion-header-bar class="bar-light bar bar-header" align-title="center">
+	<button ng-click="ionicBack()" class="button back-button buttons button-clear header-item">
+	    <i class="icon ion-ios-arrow-left"></i>
+    </button>
+    <div class="title title-center header-item"><span>填写参加人信息</span></div>
+</ion-header-bar>
+  <ion-content class="y-simple-video">
+      <div class="list y-mt">
+		  <label class="item item-input">
+		  	<span class="input-label">公司：</span>
+		    <input type="text" class="company" ng-model="company" placeholder="请输入公司名称" maxlength="20">
+		  </label>
+		  <label class="item item-input">
+		    <span class="input-label">职业：</span>
+		    <input type="text" class="profession" ng-model="job" placeholder="请输入您的职业" maxlength="10">
+		  </label>
+		  <label class="item item-input">
+		    <span class="input-label">姓名：</span>
+		    <input type="text" class="username" ng-model="username" placeholder="请输入您的姓名" maxlength="5">
+		  </label>
+		  <label class="item item-input">
+		    <span class="input-label">电话：</span>
+		    <input type="text" class="userphone" ng-model="userphone" placeholder="请输入电话号码" maxlength="11">
+		  </label>
+	</div>
+	<div class="y-next" ng-click="goPayOffice(username, userphone, company, job)">
+	    <button class="button button-block button-light">下一步</button>
+	</div>
+  </ion-content>
+</ion-view>

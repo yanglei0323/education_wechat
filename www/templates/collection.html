@@ -1,0 +1,65 @@
+<ion-view>
+<ion-header-bar class="bar-light bar bar-header" align-title="center">
+	<button ng-click="ionicBack()" class="button back-button buttons button-clear header-item">
+	    <i class="icon ion-ios-arrow-left"></i>
+    </button>
+    <div class="title title-center header-item"><span>收藏</span></div>
+</ion-header-bar>
+<div class="coll-bar flex align s-around">
+  <span class="coll-tab-item coll-tab-item-1 flex align coll-tab-active" ng-click="collSwitch(1)">专栏</span>
+  <span class="coll-tab-item coll-tab-item-2 flex align" ng-click="collSwitch(2)">视频</span>
+  <span class="coll-tab-item coll-tab-item-3 flex align" ng-click="collSwitch(3)">活动</span>
+</div>
+<ion-content class="y-simple-video">
+	<div class="coll-bar flex align s-around">
+	  <span class="coll-tab-item coll-tab-item-1 flex align coll-tab-active" ng-click="collSwitch(1)">专栏</span>
+	  <span class="coll-tab-item coll-tab-item-2 flex align" ng-click="collSwitch(2)">视频</span>
+	  <span class="coll-tab-item coll-tab-item-3 flex align" ng-click="collSwitch(3)">活动</span>
+	</div>
+	<div class="y-collection-content y-collection-content-1">
+		<div class="coll-item" ng-repeat="item in columnList" ng-click="goSubDetails(item)">
+			<img ng-src="{{item.imgurl}}" alt="" class="coll-item-img">
+			<div class="coll-item-info">
+				<span ng-bind="item.name"></span>：
+				<span ng-bind="item.title"></span>
+			</div>
+		</div>
+		<div class="y-nocontent" ng-if="nocolumn">
+      		<img src="./img/no_content.png" alt="">
+      		<div>暂无收藏</div>
+  		</div>
+  		<ion-infinite-scroll ng-if="!noMorePage" immediate-check="false" on-infinite="loadMore()" distance="1%" ></ion-infinite-scroll>
+        <div ng-if="noMorePageText" class="y-nomorepage-1">没有更多内容</div>
+	</div>
+	<div class="y-collection-content y-collection-content-2">
+		<div class="coll-item" ng-repeat="item in videoList" ng-click="goBoutiDetail(item)">
+			<img ng-src="{{item.imgurl}}" alt="" class="coll-item-img">
+			<div class="coll-item-info">
+				<span ng-bind="item.teachername"></span>：
+				<span ng-bind="item.name"></span>
+			</div>
+		</div>
+		<div class="y-nocontent" ng-if="novideo">
+      		<img src="./img/no_content.png" alt="">
+      		<div>暂无收藏</div>
+  		</div>
+  		<ion-infinite-scroll ng-if="!noMorePage1" immediate-check="false" on-infinite="loadMore1()" distance="1%" ></ion-infinite-scroll>
+        <div ng-if="noMorePageText1" class="y-nomorepage-1">没有更多内容</div>
+	</div>
+	<div class="y-collection-content y-collection-content-3">
+		<div class="coll-item" ng-repeat="item in activityList" ng-click="goOfficeDetails(item)">
+			<img ng-src="{{item.imgurl}}" alt="" class="coll-item-img">
+			<div class="coll-item-info">
+				<span ng-bind="item.teachername"></span>：
+				<span ng-bind="item.name"></span>
+			</div>
+		</div>
+		<div class="y-nocontent" ng-if="noactivity">
+      		<img src="./img/no_content.png" alt="">
+      		<div>暂无收藏</div>
+  		</div>
+  		<ion-infinite-scroll ng-if="!noMorePage2" immediate-check="false" on-infinite="loadMore2()" distance="1%" ></ion-infinite-scroll>
+        <div ng-if="noMorePageText2" class="y-nomorepage-1">没有更多内容</div>
+	</div>
+</ion-content>
+</ion-view>

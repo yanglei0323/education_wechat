@@ -1,0 +1,65 @@
+ <ion-view hide-nav-bar="false" view-title="悦美课">
+    <ion-header-bar class="bar bar-header bar-light" align-title="center">
+        <button ng-click="ionicBack()" class="button back-button buttons button-clear header-item">
+            <i class="icon ion-ios-arrow-left"></i>
+        </button>
+        <div class="title title-center header-item">支付</div>
+    </ion-header-bar>
+    <ion-content class="subscribed-bg">
+        <div class="subscribed-content">
+            <div class="subscribed">
+                <div class="subscribed-item">
+                    <div class="subscribed-img">
+                        <img ng-src="{{subDetailList.imgurl}}" alt="">
+                    </div>
+                    <div class="subscribed-text">
+                        <div class="subscribed-title">{{subDetailList.name}}</div>
+                        <div class="subscribed-subtitle">
+                            <div class="" ng-bind="subDetailList.type"></div>
+                            <div class="subscribed-dividing-line">|</div>
+                            <div class="subscribed-time" ng-bind="subDetailList.time"></div>
+                        </div>
+                        <div class="clear"></div>
+                        <div class="subscribed-price"><span>￥</span><span ng-bind="subDetailList.price"></span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pay-contact-info">
+                <div class="pay-contact-name">
+                    <span ng-bind="mName"></span>
+                </div>
+                <div class="pay-contact-telephone">
+                    <span ng-bind="mTelephone"></span>
+                </div>
+            </div>
+            <div class="clear"></div>
+
+            <div>
+                <div class="payment-method">支付方式：</div>
+                <div class="pay-radio">
+                    <div class="pay-radio-icon">
+                        <img src="img/boutique/wx_pay.png" class="pay-icon-wx">
+                    </div>
+                    <div class="pay-">
+                        <span>微信支付</span>
+                    </div>
+
+                    <div class="pay-radio-radio">
+                        <img src="img/boutique/radio.png" class="pay-icon-radio">
+                    </div>
+                </div>
+            </div>
+            <div class="clear"></div>
+
+            
+        </div>
+    </ion-content>
+    <div class="pay-bar">
+        <div class="pay-bar-price">合计：<span>￥</span><span ng-bind="subDetailList.price"></span></div>
+        <div class="pay-bar-btn" ng-click="">
+            <!-- payTeacher(subDetailList.id) 订单号 -->
+            <span>确认支付</span>
+        </div>
+    </div>
+</ion-view>

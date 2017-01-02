@@ -1,0 +1,42 @@
+<ion-view>
+<ion-header-bar class="bar bar-header bar-light" align-title="center">
+	<button ng-click="$ionicGoBack()" class="button back-button buttons button-clear header-item">
+	    <i class="icon ion-ios-arrow-back"></i>
+    </button>
+    <div class="title title-center header-item">登录</div>
+</ion-header-bar>
+<ion-content class="login-bg" scroll="false">
+	<div class="list clearfix">
+		<div class="login-logo-div">
+		</div>
+		<div class="login-input-div">
+			<label class="item item-input input-telephone">
+		        <i class="icon icon-user placeholder-icon"></i>
+		        <input class="login-input" type="text" placeholder="请输入手机号" ng-model="user.telephone">
+		    </label>
+		    <label class="item item-input input-telephone input-code">
+		        <i class="icon icon-pwd placeholder-icon"></i>
+		        <input class="login-input" type="text" placeholder="请输入验证码" ng-model="user.code">
+		    </label>
+		    <a class="padding pull-right get-checkcode" ng-click="getCode()">获取验证码</a>
+		    <div class="padding">
+		        <!-- <button class="button button-login" ng-click="login()">登录</button> button-block-->
+		        <button class="button button-login" ng-click="login(user.telephone,user.code)">登录</button>
+		    </div>
+		</div>
+
+	    <div class="quick-login">
+	    	<div class="clearfix">
+		    	<div class="login-line"></div>
+		    	<div class="quick-login-text">快捷登录</div>
+		    	<div class="login-line"></div>
+	    	</div>
+	    	<div class="quick-login-box">
+	    		<div class="quick-login-button icon-wx" ng-click="wechatLogin()"></div>
+	    		<!-- <div class="quick-login-button icon-weibo"></div> -->
+	    		<div class="quick-login-button icon-qq" ng-click="qqLogin()"></div>
+	    	</div>
+	    </div>
+	</div>
+</ion-content>
+</ion-view>

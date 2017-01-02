@@ -1,0 +1,66 @@
+<ion-view hide-nav-bar="false" view-title="悦美课" class="y-view">
+    <ion-content class="y-simple-video y-office-content">
+    	<!-- 视频模块 -->
+		<div class="y-video">
+	        <video ng-src="{{videoUrl(videoInfo.playurl)}}" controls loop poster="./img/boutique/poster.png" id="playVideo"></video>
+	        <span class="y-back" ng-click="ionicBack()"><img src="./img/boutique/goback.png" alt=""></span>
+	        <span class="y-share" ng-click="goShare(subDetailList)"><img src="./img/boutique/share.png" alt=""></span>
+	        <span class="y-collection" ng-if="!subDetailList.iskeep" ng-click="keepDesigner(subDetailList)"><img src="./img/boutique/collection.png" alt=""></span>
+	        <span class="y-collection" ng-if="subDetailList.iskeep" ng-click="keepDesigner(subDetailList)"><img src="./img/boutique/k-collection.png" alt=""></span>
+	    </div>
+	    
+	    <!-- 订阅详情 -->
+	    <div class="y-bPage y-page-1">
+	        <!-- 切换tab -->
+	        <div class="y-switch flex align s-around">
+	            <span class="y-item y-item-1 flex align column y-item-h" ng-click="goSwitch(1)">订阅详情</span>
+	            <span class="y-item y-item-2 flex align column" ng-click="goSwitch(2)">课程目录(<span ng-bind="subDetailList.columnnum"></span>)</span>
+	        </div>
+	       <div class="y-subInfo">
+	            <span class="y-sub-title">专栏简介</span>
+	            <span class="y-sub-number"><span ng-bind="subDetailList.keepnum"></span>人已订阅</span>
+	            <span class="y-designer-info">
+	                <img ng-src="{{subDetailList.imgurl}}" alt="">
+	                <span ng-bind="subDetailList.name"></span>
+	                <span class="y-job-type" ng-bind="subDetailList.job"></span>
+	            </span>
+	        </div>
+	        <div class="y-describe">
+	            <span ng-bind="subDetailList.describe"></span>
+	        </div>
+	        <span class="y-notice">订阅须知</span>
+	        <div class="y-describe y-notice-info">
+	            <p ng-bind="subDetailList.info"></p>
+	        </div> 
+	    </div>
+	    <!-- 课程目录 -->
+	    <div class="y-bPage y-page-2">
+	        <!-- 切换tab -->
+	        <div class="y-switch flex align s-around">
+	            <span class="y-item y-item-1 flex align column" ng-click="goSwitch(1)">订阅详情</span>
+	            <span class="y-item y-item-2 flex align column y-item-h" ng-click="goSwitch(2)">课程目录(<span ng-bind="subDetailList.columnnum"></span>)</span>
+	        </div>
+	        <div class="y-curr-list">
+	            <div class="y-curr-item" ng-repeat="column in columnList" ng-click="goPlayVideo(column)">
+	                <span ng-if="!column.isplay"><img src="./img/boutique/play.png" alt="" class="y-play-btn"></span>
+	                <span ng-if="column.isplay"><img src="./img/boutique/suspend.png" alt="" class="y-play-btn"></span>
+	                <div class="y-curr-info">
+	                    <p class="y-curr-title" ng-bind="column.name"></p>
+	                    <span class="y-curr-time">
+	                        <img src="./img/boutique/time-icon.png" alt="">
+	                        <span ng-bind="column.timelongs"></span>
+	                    </span>
+	                </div>
+	                <span class="y-up-time" ng-bind="column.uploadtime"></span>
+	            </div>
+	            
+	        </div>
+	    </div>
+	<div class="marginB54"></div>
+    </ion-content>
+    <!-- 订阅按钮模块 -->
+    <div class="y-pay-info" ng-if="priceType">
+        <div class="y-pay-btn" ng-if="showPrice" ng-click="subscribPay(subDetailList.id)"><span>订阅：￥</span><span ng-bind="subDetailList.price"></span><span>/年</span></div>
+        <div class="y-pay-btn" ng-if="!showPrice">订阅：<span ng-bind="subDetailList.price"></span></div>
+    </div>
+</ion-view>

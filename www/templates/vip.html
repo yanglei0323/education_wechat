@@ -1,0 +1,147 @@
+<ion-view view-title="悦美课">
+<ion-header-bar class="bar-light bar bar-header" align-title="center">
+    <button ng-click="ionicBack()" class="button back-button buttons button-clear header-item">
+        <i class="icon ion-ios-arrow-left"></i>
+    </button>
+    <div class="title title-center header-item"><span>365大咖成长联盟</span></div>
+</ion-header-bar>
+  <ion-content class="y-simple-video">
+      <div class="y-vip-header flex align">
+          <div class="y-vip-title">新空间大咖学院</div>
+          <img ng-src="{{userInfo.avatar}}" alt="" class="y-vip-uImg">
+          <div class="y-vip-grade flex align s-around">
+              <span class="flex align"><img ng-src="{{userInfo.vip.smallimgurl}}" alt=""><span ng-bind="userInfo.vip.name"></span></span>
+          </div>
+          <span class="y-vip-endtime" ng-if="!vipOne"><span ng-bind="userInfo.vipendtime"></span>到期</span>
+      </div>
+      <!-- 切换tab -->
+      <div class="y-me-tab flex align s-around y-vip-tab">
+          <span class="y-meTab-item y-meTab-item-1 flex align meTab-item-h" ng-click="vipTab(1)">
+            <span class="flex align" ng-if="!basics"><img src="./img/vip/basics-1.png" alt=""></span>
+            <span class="flex align" ng-if="basics"><img src="./img/vip/basics-2.png" alt=""></span>
+            <span>基础会员</span>
+          </span>
+          <span class="y-meTab-item y-meTab-item-2 flex align" ng-click="vipTab(2)">
+            <span class="flex align" ng-if="!senior"><img src="./img/vip/senior-1.png" alt=""></span>
+            <span class="flex align" ng-if="senior"><img src="./img/vip/senior-2.png" alt=""></span>
+            <span>高级会员</span>
+          </span>
+          <span class="y-meTab-item y-meTab-item-3 flex align" ng-click="vipTab(3)">
+            <span class="flex align" ng-if="!custom"><img src="./img/vip/custom-1.png" alt=""></span>
+            <span class="flex align" ng-if="custom"><img src="./img/vip/custom-2.png" alt=""></span>
+            <span>定制会员</span>
+          </span>
+      </div>
+
+      <!-- 基础会员内容 -->
+      <div class="vip-content" ng-if="basics">
+        <div class="vip-price flex align s-between">
+          <span class="vip-price-left">会员费用</span>
+          <span class="vip-price-right">
+            <span class="y-costPrice">￥<span ng-bind="viplistList[1].originalprice"></span></span>
+            <span class="y-currentPrice">￥<span ng-bind="viplistList[1].price"></span>元/年</span>
+          </span>
+        </div>
+        <!-- 会员权益 -->
+        <div class="vip-privilege">
+          <div class="privilege-description">
+              <p>订阅任意一位大咖专栏即可成为会员，订阅成功后，再多送</p>
+              <span class="privilege-special">6个月会员身份</span>,享受专属权益。
+          </div>
+          <div class="vip-description">
+            <p class="flex align"><img src="./img/vip/vip.png" alt="" class="vip-icon"><span>会员权益：</span></p>
+            <p class="y-pl">1.全年免费观看公开课视频；</p>
+            <p class="y-pl">2.享受会员专属的身份标签；</p>
+            <p class="y-pl">3.参加线下活动优先入场权；</p>
+          </div>
+        </div>
+        <div class="buy-vip" ng-if="vipOne" ng-click="goHomePage()">立即订阅</div>
+      </div>
+
+
+      <!-- 高级会员内容 -->
+      <div class="vip-content" ng-if="senior">
+        <div class="vip-price flex align s-between">
+          <span class="vip-price-left">会员费用</span>
+          <span class="vip-price-right">
+            <span class="y-costPrice">￥<span ng-bind="viplistList[2].originalprice"></span></span>
+            <span class="y-currentPrice">￥<span ng-bind="viplistList[2].price"></span>元/年</span>
+          </span>
+        </div>
+        <!-- 会员权益 -->
+        <div class="vip-privilege">
+          <div class="vip-description">
+            <p class="flex align"><img src="./img/vip/vip.png" alt="" class="vip-icon"><span>会员权益：</span></p>
+            <p class="y-pl">1.全年免费观看公开课视频；</p>
+            <p class="y-pl">2.全年免费观看精品频道视频；</p>
+            <p class="y-pl">3.免费参加线下高级会员沙龙；</p>
+            <p class="y-pl">4.享受会员专属的身份标签；</p>
+            <p class="y-pl">5.参加线下活动优先入场权；</p>
+          </div>
+        </div>
+        <div class="buy-vip" ng-if="vipTwo" ng-click="goBuyVip(3)">立即购买</div>
+      </div>
+
+
+      <!-- 定制会员内容 -->
+      <div class="vip-content" ng-if="custom">
+        <div class="vip-price flex align s-between">
+          <span class="vip-price-left">会员费用</span>
+          <span class="vip-price-right">
+            <span class="y-costPrice">￥<span ng-bind="viplistList[3].originalprice"></span></span>
+            <span class="y-currentPrice">￥<span ng-bind="viplistList[3].price"></span>元/年</span>
+          </span>
+        </div>
+        <!-- 会员权益 -->
+        <div class="vip-privilege">
+          <div class="vip-description">
+            <p class="flex align"><img src="./img/vip/vip.png" alt="" class="vip-icon"><span>会员权益：</span></p>
+            <p class="y-pl">1.全年免费观看公开课视频；</p>
+            <p class="y-pl">2.全年免费观看精品频道视频；</p>
+            <p class="y-pl">3.免费参加线下高级会员沙龙；</p>
+            <p class="y-pl">4.免费订阅5位老师的订阅课程；</p>
+            <p class="y-pl">5.享受会员专属的身份标签；</p>
+            <p class="y-pl">6.获得权威行业认证资质；</p>
+            <p class="y-pl">7.参加全年大秀资格；</p>
+            <p class="y-pl">8.参加线下活动会员专座；</p>
+          </div>
+        </div>
+        <div class="buy-vip" ng-if="vipThr" ng-click="goBuyVip(4)">立即购买</div>
+      </div>
+  </ion-content>
+</ion-view>
+<!-- 提交信息模态窗 -->
+<script id="templates/modal.html" type="text/ng-template">
+  <ion-modal-view>
+    <ion-header-bar class="bar bar-header bar-light vip-bar">
+      <h1 class="title vip-mt-title">请输入您的入会信息</h1>
+      <button class="button button-clear button-primary vip-btn" ng-click="modal.hide()">×</button>
+    </ion-header-bar>
+    <ion-content class="y-padding">
+      <div class="list">
+        <label class="item item-input vip-input">
+          <span class="input-label vip-label"><span class="vip-req">*</span>姓名：</span>
+          <input ng-model="newUser.firstName" type="text" placeholder="你想让我们怎么称呼您？" required>
+        </label>
+        <label class="item item-input vip-input">
+          <span class="input-label vip-label"><span class="vip-req">*</span>手机：</span>
+          <input ng-model="newUser.tel" type="text" placeholder="手机号是您的登录账号，请准确填写" required>
+        </label>
+        <label class="item item-input vip-input">
+          <span class="input-label vip-label"><span class="vip-req">*</span>公司：</span>
+          <input ng-model="newUser.company" type="text" placeholder="请输入您的公司名称" required>
+        </label>
+        <label class="item item-input vip-input">
+          <span class="input-label vip-label"><span class="vip-req">*</span>职位：</span>
+          <input ng-model="newUser.job" type="text" placeholder="请输入您的职位" required>
+        </label>
+        <label class="item item-input vip-input">
+          <span class="input-label vip-label"><span class="vip-req">*</span>城市：</span>
+          <input ng-model="newUser.city" type="text" placeholder="请输入您的城市" required>
+        </label>
+        <span class="vip-fwtk"><span class="vip-or">* </span>提交即默认同意相关<span class="vip-or">服务条款</span></span>
+        <button class="button button-full button-positive saveInfoBtn" ng-click="createContact(newUser)">提交</button>
+      </div>
+    </ion-content>
+  </ion-modal-view>
+</script>

@@ -1,0 +1,89 @@
+$tabSize: 25px;
+.icon-micro-lesson {
+	background: url(../img/micro_lesson.png) no-repeat center;
+	background-size: $tabSize auto;
+}
+
+.icon-micro-lesson-active {
+	background: url(../img/micro_lesson_active.png) no-repeat center;
+	background-size: $tabSize auto;
+}
+
+.icon-subscribed {
+	background: url(../img/subscribed.png) no-repeat center;
+	background-size: $tabSize auto;
+}
+.icon-subscribed-active {
+	background: url(../img/subscribed_active.png) no-repeat center;
+	background-size: $tabSize auto;
+}
+
+.icon-offline-lesson {
+	background: url(../img/offline_lesson.png) no-repeat center;
+	background-size: $tabSize auto;
+}
+
+.icon-offline-lesson-active {
+	background: url(../img/offline_lesson_active.png) no-repeat center;
+	background-size: $tabSize auto;
+}
+
+.icon-me {
+	background: url(../img/me.png) no-repeat center;
+	background-size: $tabSize auto;
+}
+
+.icon-me-active {
+	background: url(../img/me_active.png) no-repeat center;
+	background-size: $tabSize auto;
+}
+
+ion-tabs.tabs-color-active-positive {
+	.tab-item.tab-item-active {
+		color: $orange !important;
+		text-decoration: none;
+	}
+}
+
+.home-bar{
+	width:100%;
+	height:44px;
+	background:#fff !important;
+	font-size:14px;
+	color:#333;
+	position:fixed;
+	left:0;
+	top:0;
+	z-index:100000;
+	span{
+		width:24%;
+		height:44px;
+		border-bottom:2px solid #fff;
+		text-align:center;
+		justify-content: center;
+		line-height:44px;
+	}
+	.home-tab-active{
+		color:#f5a523;
+		border-bottom:2px solid #f5a523;
+	}
+}
+.hometab .tabs{  
+    top:0;  
+    border:0;  
+    background:none; 
+    height:44px !important; 
+  
+} 
+.hometab .tabs .tab-item >span{ 
+    color:#333; 
+} 
+.hometab .tabs .tab-item-active { 
+    border-bottom:2px solid #f5a523; 
+}  
+.hometab .tabs .tab-item-active > span {  
+    color:#f5a523;   
+}  
+.hometab .has-tabs-top {  
+    top:44px;  
+}

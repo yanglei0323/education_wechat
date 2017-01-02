@@ -1,0 +1,96 @@
+<ion-view view-title="悦美课">
+
+  <ion-content class="y-simple-video">
+      <!-- <button type="button" ng-click="logout()">退出登录</button>
+      <a ui-sref="binding-phone">绑定手机号</a> -->
+      <div class="user-info" ng-if="isLogin">
+        <img ng-src="{{userInfo.avatar}}" class="head-img" ng-click="goPerCenter()">
+        <div class="y-username"><span ng-bind="userInfo.nickname"></span></div>
+        <div class="bottom-info">
+            <span class="y-info-item" ng-click="navigate(1)">
+                <span>
+                    <img src="./img/me/collection.png" ng-click="goCollection()">
+                </span>      
+                <span class="text" ng-click="goCollection()">收藏</span>
+            </span>
+            <span class="y-info-item" ng-click="navigate(1)">
+                <span>
+                    <img src="./img/me/365.png" ng-click="goVip()">
+                </span>      
+                <span class="text" ng-click="goVip()">365大咖成长联盟</span>
+            </span>
+        </div>
+        <div class="y-vertical"></div>
+        <div class="y-setUp"><img src="./img/me/setUp.png" alt="" ng-click="goSetUp()"></div>
+      </div>
+      <div class="user-info" ng-if="!isLogin">
+        <img ng-src="img/head-none.png" class="head-img" ng-click="goPerCenter()">
+        <div class="button-me-login" ng-click="goLogin()">登录</div>
+      </div>
+      <!-- 切换tab -->
+      <div class="y-me-tab flex align s-around">
+          <span class="y-meTab-item y-meTab-item-1 flex align meTab-item-h" ng-click="goTab(1)">学习记录</span>
+          <span class="y-meTab-item y-meTab-item-2 flex align" ng-click="goTab(2)">已购买</span>
+          <span class="y-meTab-item y-meTab-item-3 flex align" ng-click="goTab(3)">报名记录</span>
+      </div>
+      <div class="y-page y-page-1">
+        <div class="y-personInfo" ng-repeat="studyInfo in studyList" ng-click="goBoutiDetail(studyInfo)">
+          <img ng-src="{{studyInfo.scolumn.imgurl}}" alt="" class="learnImg">
+          <div class="learnImg-info" ng-bind="studyInfo.alreadytimes"></div>
+          <div class="learn-info">
+            <span class="learn-name"><span ng-bind="studyInfo.scolumn.name"></span></span>
+            <span class="learn-detail">剩余：<span ng-bind="studyInfo.scolumn.timelongs"></span><span class="y-ml-15">第<span ng-bind="studyInfo.scolumn.number"></span>集/共<span ng-bind="studyInfo.scolumn.totalnum"></span>集</span></span>
+          </div>
+        </div>
+        <div class="y-personInfo" ng-repeat="studyInfo in studyVideoList" ng-click="goBoutiDetail(studyInfo)">
+          <img ng-src="{{studyInfo.video.imgurl}}" alt="" class="learnImg">
+          <div class="learnImg-info" ng-bind="studyInfo.alreadytimes"></div>
+          <div class="learn-info">
+            <span class="learn-name"><span ng-bind="studyInfo.video.teachername"></span>: <span ng-bind="studyInfo.video.name"></span></span>
+            <span class="learn-detail">时长：<span ng-bind="studyInfo.video.timelongs"></span></span>
+          </div>
+        </div>
+        <div class="y-nocontent" ng-if="nocontent">
+          <img src="./img/no_content.png" alt="">
+          <div>暂无学习记录</div>
+      </div>
+        <ion-infinite-scroll ng-if="!noMorePage" immediate-check="false" on-infinite="loadMore()" distance="1%" ></ion-infinite-scroll>
+        <div ng-if="noMorePageText" class="y-nomorepage-1">没有更多内容</div>
+      </div>
+      <div class="y-page y-page-2">
+        <div class="y-personInfo" ng-repeat="buyitem in buyList" ng-click="goBoutiDetail(buyitem)">
+          <img ng-src="{{buyitem.imgurl}}" alt="" class="learnImg">
+          <div class="learn-info">
+            <span class="learn-name"><span ng-bind="buyitem.teachername"></span>: <span ng-bind="buyitem.name"></span></span>
+            <span class="learn-detail">购买于：<span ng-bind="buyitem.time"></span></span>
+          </div>
+        </div>
+        <div class="y-nocontent" ng-if="nobuy">
+          <img src="./img/no_content.png" alt="">
+          <div>暂无购买记录</div>
+      </div>
+      <ion-infinite-scroll ng-if="!noMorePage1" immediate-check="false" on-infinite="loadMore1()" distance="1%" ></ion-infinite-scroll>
+        <div ng-if="noMorePageText1" class="y-nomorepage-1">没有更多内容</div>
+      </div>
+      <div class="y-page y-page-3">
+        <div class="y-personInfo" ng-repeat="activeitem in signList" ng-click="goActivityDetail(activeitem)">
+          <img ng-src="{{activeitem.imgurl}}" alt="" class="learnImg">
+          <div class="learn-info">
+            <span class="active-name"><span ng-bind="activeitem.teachername"></span>: <span ng-bind="activeitem.name"></span></span>
+            <span class="y-active-info">
+              <img src="./img/me/position.png" alt=""><span ng-bind="activeitem.position" class="y-mr"></span>
+              <img src="./img/me/time.png" alt=""><span ng-bind="activeitem.worktime"></span>
+            </span>
+            <span class="y-active-price" ng-bind="activeitem.price"></span>
+          </div>
+          <div class="y-activity-status"><span ng-bind="activeitem.status"></span></div>
+        </div>
+        <div class="y-nocontent" ng-if="nosign">
+          <img src="./img/no_content.png" alt="">
+          <div>暂无报名记录</div>
+      </div>
+      <ion-infinite-scroll ng-if="!noMorePage2" immediate-check="false" on-infinite="loadMore2()" distance="1%" ></ion-infinite-scroll>
+        <div ng-if="noMorePageText2" class="y-nomorepage-1">没有更多内容</div>
+      </div>
+  </ion-content>
+</ion-view>

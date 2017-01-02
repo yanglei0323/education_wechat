@@ -1,0 +1,21 @@
+<ion-view>
+<ion-header-bar class="bar-light bar bar-header" align-title="center">
+	<button ng-click="ionicBack()" class="button back-button buttons button-clear header-item">
+	    <i class="icon ion-ios-arrow-left"></i>
+    </button>
+    <div class="title title-center header-item"><span>设置</span></div>
+</ion-header-bar>
+<ion-content class="y-simple-video">
+	<div class="y-setup-content">
+		<div class="setupItem setupItem-border" ng-click="goComplaints()">
+			<span>产品吐槽</span>
+			<span class="y-rightIcon"><img src="./img/boutique/right-icon.png" alt=""></span>
+		</div>
+		<div class="setupItem" ng-click="goAboutUs()">
+			<span>关于我们</span>
+			<span class="y-rightIcon"><img src="./img/boutique/right-icon.png" alt=""></span>
+		</div>
+		<div class="exitLogin" ng-click="logout()">退出登录</div>
+	</div>
+</ion-content>
+</ion-view>
