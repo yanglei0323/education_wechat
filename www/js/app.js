@@ -8,7 +8,7 @@
 var picBasePath = 'http://yuemeikeimg.oss-cn-beijing.aliyuncs.com';
 var educationApp = angular.module('education', ['ionic','ngCordova'])
 
-.run(function($ionicPlatform, $rootScope, User, $state) {
+.run(function($ionicPlatform, $rootScope, User, $state, $ionicLoading, Popup, Http) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -22,6 +22,75 @@ var educationApp = angular.module('education', ['ionic','ngCordova'])
       StatusBar.styleDefault();
       StatusBar.overlaysWebView(false);
     }
+
+    // 微信授权登录后获取code
+    (function wechatAuth() {
+        var getUrlParam = function(name) {  
+            //构造一个含有目标参数的正则表达式对象  
+            var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");  
+            //匹配目标参数  
+            var r = window.location.search.substr(1).match(reg);  
+            //返回参数值  
+            if (r!=null) return decodeURI(r[2]);  
+            return null;  
+        };
+        var code = getUrlParam('code');
+        
+        if (code) {
+            // 通过code获取access_token等信息
+            var data = {
+                appid: 'wxef3e1498e754b61d',
+                secret: '5e21b13a8d5e9b071b9bef2ad65e1883',
+                code: code,
+                grant_type: 'authorization_code'
+            };
+            $.ajax({
+                url: '/sns/oauth2/access_token',
+                type: 'GET',
+                data: data,
+                success: function (resp) {
+                    resp = JSON.parse(resp);
+                    if (resp.errcode) {
+                      Popup.alert(resp.errmsg);
+                    }
+                    else {
+                      // 获取授权信息成功
+                      var data = {
+                        type: 'wx',
+                        token: resp.access_token,
+                        openid: resp.openid
+                      };
+                      // localStorage.setItem('isWechatLogin', true);
+                      Http.post('/user/unl/thirdlogin.json', data)
+                      .success(function (resp) {
+                        if (1 === resp.code) {
+                          // 登录成功(用户已绑定手机号)
+                          localStorage.setItem('isLogin', true);
+                          localStorage.setItem('user', JSON.stringify(resp.data));
+                        }
+                        else if (2 === resp.code) {
+                          // 微信授权成功，用户未绑定手机号，则跳转到手机号绑定页
+                          var confirm = Popup.alert('请先绑定手机号');
+                          confirm.then(function () {
+                            $state.go('binding-phone');
+                          });
+                        }
+                        else {
+                          Popup.alert(resp.reason);
+                        }
+                      })
+                      .error(function () {
+                        $ionicLoading.hide();
+                        Popup.alert('数据请求失败，请稍后再试');
+                      });
+                    }
+                },
+                error: function () {
+                    alert('授权信息获取失败');
+                }
+            });
+        }
+    })();
   });
 })
 
@@ -32,41 +101,7 @@ var educationApp = angular.module('education', ['ionic','ngCordova'])
   // Set up the various states which the app can be in.
   // Each state's controller can be found in controllers.js
 
-  // 微信授权登录后获取code
-  (function wechatAuth() {
-      console.log(navigator.userAgent);
-      var getUrlParam = function(name) {  
-          //构造一个含有目标参数的正则表达式对象  
-          var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");  
-          //匹配目标参数  
-          var r = window.location.search.substr(1).match(reg);  
-          //返回参数值  
-          if (r!=null) return decodeURI(r[2]);  
-          return null;  
-      };
-      var code = getUrlParam('code');
-      console.log(code);
-      if (code) {
-          // 通过code获取access_token等信息
-          var data = {
-              appid: 'wxef3e1498e754b61d',
-              secret: '5e21b13a8d5e9b071b9bef2ad65e1883',
-              code: code,
-              grant_type: 'authorization_code'
-          };
-          $.ajax({
-              url: '/sns/oauth2/access_token',
-              type: 'GET',
-              data: data,
-              success: function (resp) {
-                  console.log(resp);
-              },
-              error: function () {
-                  alert('数据请求失败，请稍后再试');
-              }
-          });
-      }
-  })();
+  
   $locationProvider.html5Mode(true);
 
   // 设置android中tabs默认显示在底部
