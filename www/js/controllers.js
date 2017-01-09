@@ -807,20 +807,6 @@ educationApp.controller('complaintsCtrl', ['$scope','Http', 'Popup', '$rootScope
         
     };
 }]);
-educationApp.controller('guideCtrl', ['$scope','$state','$ionicPlatform','$ionicViewSwitcher', function ($scope,$state,$ionicPlatform,$ionicViewSwitcher) {
-	console.log('引导控制器');
-	// $ionicPlatform.fullScreen(true,false);
-	// $ionicPlatform.showStatusBar(false);
-
-	if(!localStorage.getItem('isfirstLoad')){
-		console.log('引导~~~');
-	}
-	
-	$scope.goTab = function () {
-		localStorage.setItem('isfirstLoad', true);
-		$state.go('tab.micro-lesson');
-	};
-}]);
 educationApp.controller('loginCtrl',
 	['$scope', '$rootScope', 'Http', 'Popup', 'User', '$http', '$state', '$ionicLoading', '$window', '$ionicHistory', '$ionicViewSwitcher',
 	function ($scope, $rootScope, Http, Popup, User, $http, $state, $ionicLoading, $window, $ionicHistory, $ionicViewSwitcher) {
@@ -2834,22 +2820,6 @@ educationApp.controller('setUpCtrl', ['$scope','Http', 'Popup', '$rootScope','$s
 	$scope.goAboutUs= function () {
 	    $state.go("aboutus",{reload:true});
 	    $ionicViewSwitcher.nextDirection("forward");
-	};
-}]);
-educationApp.controller('startUpCtrl', ['$scope','$state','$timeout','$ionicPlatform', function ($scope,$state,$timeout,$ionicPlatform) {
-	console.log('启动控制器');
-	// $ionicPlatform.fullScreen(true,false);
-	// $ionicPlatform.showStatusBar(false);
-	$timeout(function () {
-		if (!localStorage.getItem('isfirstLoad')) {
-			$state.go('guide');
-		} else {
-			$state.go('tab.micro-lesson');
-		}
-	}, 1000);
-	
-	$scope.goTab = function () {
-		$state.go('tab.micro-lesson');
 	};
 }]);
 educationApp.controller('subscribdetailsCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$ionicActionSheet','$sce','$timeout','$ionicModal', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$ionicActionSheet,$sce,$timeout,$ionicModal) {
