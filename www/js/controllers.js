@@ -9,7 +9,7 @@ educationApp.controller('aboutusCtrl', ['$scope','Http', 'Popup', '$rootScope','
 educationApp.controller('activitydetailCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher) {
 	console.log('报名详情详情控制器');
 	var useractivityId=$stateParams.useractivityid;
-	$scope.activityDetailsInfo = [];
+	$scope.activityDetailsInfo = {};
 	
 	// 获取验证码
 	var data = {
@@ -17,7 +17,6 @@ educationApp.controller('activitydetailCtrl', ['$scope','Http', 'Popup', '$rootS
 	};
 	Http.post('/activity/myactivity.json',data)
 	.success(function (resp) {
-		console.log(resp);
 		if (1 === resp.code) {
 			resp.data.activity.imgurl=picBasePath + resp.data.activity.imgurl;
 			$scope.activityDetailsInfo=resp.data;
@@ -116,6 +115,38 @@ educationApp.controller('areaCtrl', ['$scope','Http', 'Popup', '$rootScope','$st
 			
 		}
 	};
+	// 下拉刷新
+	$scope.doRefresh = function() {
+		var areaPage=1;
+		var data = {
+			topicid:topicId,
+			page:areaPage
+		};
+		Http.post('/page/unl/topicvideo.json',data)
+		.success(function (resp) {
+			// console.log(resp);
+			if (1 === resp.code) {
+				var videoList = resp.data.videolist;
+				for (var i = 0; i < videoList.length; i++) {
+					videoList[i].imgurl = picBasePath + videoList[i].imgurl;
+					if(parseInt(videoList[i].price) >= 0){
+						videoList[i].showprice=true;
+					}else{
+						videoList[i].showprice=false;
+					}
+				}
+        		$scope.areaList = [];
+				$scope.areaList = videoList;
+				areaPage++;
+				$scope.noMorePage=false;
+			}
+			else if (0 === resp.code) {
+			}
+		})
+		.finally(function() {
+            $scope.$broadcast('scroll.refreshComplete');
+        });
+    };
 }]);
 educationApp.controller('bindingPhoneCtrl', ['$scope', '$rootScope', '$state', 'Http', 'Popup', function ($scope, $rootScope, $state, Http, Popup) {
 	
@@ -158,11 +189,7 @@ educationApp.controller('bindingPhoneCtrl', ['$scope', '$rootScope', '$state', '
 				// 跳转到 登录后的我
 				localStorage.setItem('isLogin', true);
 				localStorage.setItem('user', JSON.stringify(resp.data));
-				var confirm = Popup.alert('登录成功');
-				confirm.then(function () {
-					// $ionicHistory.goBack();
-					$rootScope.$ionicGoBack();
-				});
+				$state.go('tab.me');
 			} else if ( 0 === resp.code ) {
 				Popup.alert(resp.reason);
 			} else {
@@ -174,12 +201,15 @@ educationApp.controller('bindingPhoneCtrl', ['$scope', '$rootScope', '$state', '
 		});;
 	};
 }]);
-educationApp.controller('boutiquedetailCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$ionicActionSheet','$sce', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$ionicActionSheet,$sce) {
+educationApp.controller('boutiquedetailCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$ionicActionSheet','$sce','$ionicModal', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$ionicActionSheet,$sce,$ionicModal) {
 	console.log('付费精品视频详情');
 	var videoId=$stateParams.videoid;
 	$scope.boutiDetailList = {};
 	$scope.priceType = false;
 	$scope.showPrice = true;
+	$scope.endedDiv = false;
+	$('.y-endplay').css({'display':'none'});
+
 	// 视频功能
 	var data1 = {
 		videoid:videoId
@@ -187,9 +217,16 @@ educationApp.controller('boutiquedetailCtrl', ['$scope','Http', 'Popup', '$rootS
 	// console.log(data1);
 	Http.post('/unl/playurl.json',data1)
 	.success(function (resp) {
-		// console.log(resp);
+		console.log(resp);
 		if (1 === resp.code) {
 			$scope.videoInfo=resp.data;
+			// 视频监听
+			if($scope.videoInfo.type == 'short'){
+				var yvideo = document.getElementById('playVideo') || null;
+				yvideo.addEventListener('ended',function(){
+					$('.y-endplay').css({'display':'block'});
+				});
+			}
 		}
 		else if (0 === resp.code) {
 		}
@@ -212,12 +249,14 @@ educationApp.controller('boutiquedetailCtrl', ['$scope','Http', 'Popup', '$rootS
 			resp.data.teacheravatar=picBasePath + resp.data.teacheravatar;
 			resp.data.imgurl=picBasePath + resp.data.imgurl;
 			$scope.boutiDetailList =resp.data;
+			$scope.boutiDetailList.teacherdescribe=$scope.boutiDetailList.teacherdescribe.split("\n");
 			var priceType=parseInt(resp.data.price);
-			if(priceType>=0 || $scope.boutiDetailList.price == '免费'){
+			if(priceType>=0 ){
 				$scope.priceType = true;
 			}
 			if($scope.boutiDetailList.price == '免费'){
-				$scope.showPrice = false;
+				// $scope.showPrice = false;
+				$scope.priceType = false;
 			}
 		}
 		else if (0 === resp.code) {
@@ -375,6 +414,33 @@ educationApp.controller('boutiquedetailCtrl', ['$scope','Http', 'Popup', '$rootS
 			console.log('数据请求失败，请稍后再试！');
 		});
 	};
+	$ionicModal.fromTemplateUrl('templates/modal.html', {
+	  scope: $scope
+	}).then(function(modal) {
+	  $scope.modal = modal;
+	});
+	// 头像放大
+	$scope.enlarge=function(url){
+		$scope.modal.show();
+		$scope.enlargeImg=url;
+	};
+	// 头像放大
+	$scope.hideModal=function(){
+		$scope.modal.hide();
+	};
+	
+	// 重新试看
+	$scope.playAgin=function(){
+		var yvideo = document.getElementById('playVideo') || null;
+		$('.y-endplay').css({'display':'none'});
+		yvideo.play();
+	};
+	// 立即订阅
+	$scope.goSub=function(){
+		sessionStorage.setItem('tabNum',1);
+		$state.go("tab.micro-lesson",{reload:true});
+        $ionicViewSwitcher.nextDirection("forward");
+	};
 }]);
 educationApp.controller('buyvideoCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher) {
 	console.log('视频支付');
@@ -400,6 +466,42 @@ educationApp.controller('buyvideoCtrl', ['$scope','Http', 'Popup', '$rootScope',
 	.error(function (resp) {
 		console.log(resp);
 	});
+
+	$scope.payVideo = function (orderID) {
+		var data = {
+			type: 'wx',
+			orderid: orderID
+		};
+		Http.post('/pay/prepay.json', data)
+		.success(function (resp) {
+			if (1 === resp.code) {
+				var data = resp.data;
+				// 预支付成功
+				var params = {
+				    partnerid: data.partnerid, // merchant id
+				    prepayid: data.prepayid, // prepay id
+				    noncestr: data.noncestr, // nonce
+				    timestamp: data.timestamp, // timestamp
+				    sign: data.sign, // signed string
+				};
+				Wechat.sendPaymentRequest(params, function () {
+				    var confirm = Popup.alert("支付成功！");
+				    confirm.then(function () {
+				    	// 这里支付成功后的逻辑是什么，暂时跳转到我的
+				    	sessionStorage.setItem('meTab',2);
+				    	$state.go('tab.me');
+				    	$ionicViewSwitcher.nextDirection("forward");
+				    });
+
+				}, function (reason) {
+				    Popup.alert("Failed: " + reason);
+				});
+			}
+		})
+		.error(function (){
+			Popup.alert('数据请求失败，请稍后再试');
+		});
+	}
 	
 	// 返回上一页
 	$scope.ionicBack= function () {
@@ -407,7 +509,7 @@ educationApp.controller('buyvideoCtrl', ['$scope','Http', 'Popup', '$rootScope',
 	    $ionicViewSwitcher.nextDirection("back");
 	};
 }]);
-educationApp.controller('collectionCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','User','$ionicViewSwitcher','$timeout', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,User,$ionicViewSwitcher,$timeout) {
+educationApp.controller('collectionCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','User','$ionicViewSwitcher','$timeout','$ionicScrollDelegate', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,User,$ionicViewSwitcher,$timeout,$ionicScrollDelegate) {
     console.log('收藏列表控制器');
     $scope.nocolumn=true;
     $scope.novideo=true;
@@ -415,6 +517,9 @@ educationApp.controller('collectionCtrl', ['$scope','Http', 'Popup', '$rootScope
     $scope.noMorePage=false;
     $scope.noMorePage1=false;
     $scope.noMorePage2=false;
+    $scope.scrollNum1=true;
+    $scope.scrollNum2=false;
+    $scope.scrollNum3=false;
     // 返回上一页
     $scope.ionicBack= function () {
         $ionicHistory.goBack();
@@ -458,35 +563,40 @@ educationApp.controller('collectionCtrl', ['$scope','Http', 'Popup', '$rootScope
     $scope.noMorePageText=false;
     $scope.loading=false;
     $scope.loadMore=function(){
-        if(!$scope.loading){
-            $scope.loading=true;
-            $timeout(function(){
-                Http.post('/user/keeplist.json',{type:1,page:page})
-                .success(function (resp) {
-                    console.log(resp);
-                    if (1 === resp.code) {
-                        var teacherList = resp.data.teacherlist;
-                        for (var i = 0; i < teacherList.length; i++) {
-                            teacherList[i].imgurl = picBasePath + teacherList[i].imgurl;
-                            $scope.columnList.push(teacherList[i]);
+        if($scope.scrollNum1){
+           if(!$scope.loading){
+                $scope.loading=true;
+                $timeout(function(){
+                    Http.post('/user/keeplist.json',{type:1,page:page})
+                    .success(function (resp) {
+                        console.log(resp);
+                        if (1 === resp.code) {
+                            var teacherList = resp.data.teacherlist;
+                            for (var i = 0; i < teacherList.length; i++) {
+                                teacherList[i].imgurl = picBasePath + teacherList[i].imgurl;
+                                $scope.columnList.push(teacherList[i]);
+                            }
+                            page+=1;
+                            $scope.$broadcast('scroll.infiniteScrollComplete');
+                            $scope.loading=false;
+                            if (teacherList.length === 0) {
+                                $scope.noMorePage=true;//禁止滚动触发事件
+                                $scope.noMorePageText=true;
+                            } 
                         }
-                        page+=1;
-                        $scope.$broadcast('scroll.infiniteScrollComplete');
-                        $scope.loading=false;
-                        if (teacherList.length === 0) {
-                            $scope.noMorePage=true;//禁止滚动触发事件
-                            $scope.noMorePageText=true;
-                        } 
-                    }
-                    else if (0 === resp.code) {
-                    }
-                })
-                .error(function (resp) {
-                    console.log(resp);
-                });
-            },1000);
-            
+                        else if (0 === resp.code) {
+                        }
+                    })
+                    .error(function (resp) {
+                        console.log(resp);
+                    });
+                },1000);
+                
+            } 
+        }else{
+            $scope.$broadcast('scroll.infiniteScrollComplete');
         }
+        
     };
 
 
@@ -528,35 +638,40 @@ educationApp.controller('collectionCtrl', ['$scope','Http', 'Popup', '$rootScope
     $scope.noMorePageText1=false;
     $scope.loading1=false;
     $scope.loadMore1=function(){
-        if(!$scope.loading1){
-            $scope.loading1=true;
-            $timeout(function(){
-                Http.post('/user/keeplist.json',{type:2,page:page1})
-                .success(function (resp) {
-                    console.log(resp);
-                    if (1 === resp.code) {
-                        var videoList = resp.data.videolist;
-                        for (var i = 0; i < videoList.length; i++) {
-                            videoList[i].imgurl = picBasePath + videoList[i].imgurl;
-                            $scope.videoList.push(videoList[i]);
+        if($scope.scrollNum2){
+            if(!$scope.loading1){
+                $scope.loading1=true;
+                $timeout(function(){
+                    Http.post('/user/keeplist.json',{type:2,page:page1})
+                    .success(function (resp) {
+                        console.log(resp);
+                        if (1 === resp.code) {
+                            var videoList = resp.data.videolist;
+                            for (var i = 0; i < videoList.length; i++) {
+                                videoList[i].imgurl = picBasePath + videoList[i].imgurl;
+                                $scope.videoList.push(videoList[i]);
+                            }
+                            page1+=1;
+                            $scope.$broadcast('scroll.infiniteScrollComplete');
+                            $scope.loading1=false;
+                            if (videoList.length === 0) {
+                                $scope.noMorePage1=true;//禁止滚动触发事件
+                                $scope.noMorePageText1=true;
+                            } 
                         }
-                        page1+=1;
-                        $scope.$broadcast('scroll.infiniteScrollComplete');
-                        $scope.loading1=false;
-                        if (videoList.length === 0) {
-                            $scope.noMorePage1=true;//禁止滚动触发事件
-                            $scope.noMorePageText1=true;
-                        } 
-                    }
-                    else if (0 === resp.code) {
-                    }
-                })
-                .error(function (resp) {
-                    console.log(resp);
-                });
-            },1000);
-            
+                        else if (0 === resp.code) {
+                        }
+                    })
+                    .error(function (resp) {
+                        console.log(resp);
+                    });
+                },1000);
+                
+            }
+        }else{
+            $scope.$broadcast('scroll.infiniteScrollComplete');
         }
+        
     };
 
     // 获取收藏记录(3活动)
@@ -593,35 +708,40 @@ educationApp.controller('collectionCtrl', ['$scope','Http', 'Popup', '$rootScope
     $scope.noMorePageText2=false;
     $scope.loading2=false;
     $scope.loadMore2=function(){
-        if(!$scope.loading2){
-            $scope.loading2=true;
-            $timeout(function(){
-                Http.post('/user/keeplist.json',{type:3,page:page2})
-                .success(function (resp) {
-                    console.log(resp);
-                    if (1 === resp.code) {
-                        var activityList = resp.data.activitylist;
-                        for (var i = 0; i < activityList.length; i++) {
-                            activityList[i].imgurl = picBasePath + activityList[i].imgurl;
-                            $scope.activityList.push(activityList[i]);
+        if($scope.scrollNum3){
+            if(!$scope.loading2){
+                $scope.loading2=true;
+                $timeout(function(){
+                    Http.post('/user/keeplist.json',{type:3,page:page2})
+                    .success(function (resp) {
+                        console.log(resp);
+                        if (1 === resp.code) {
+                            var activityList = resp.data.activitylist;
+                            for (var i = 0; i < activityList.length; i++) {
+                                activityList[i].imgurl = picBasePath + activityList[i].imgurl;
+                                $scope.activityList.push(activityList[i]);
+                            }
+                            page2+=1;
+                            $scope.$broadcast('scroll.infiniteScrollComplete');
+                            $scope.loading2=false;
+                            if (activityList.length === 0) {
+                                $scope.noMorePage2=true;//禁止滚动触发事件
+                                $scope.noMorePageText2=true;
+                            } 
                         }
-                        page2+=1;
-                        $scope.$broadcast('scroll.infiniteScrollComplete');
-                        $scope.loading2=false;
-                        if (activityList.length === 0) {
-                            $scope.noMorePage2=true;//禁止滚动触发事件
-                            $scope.noMorePageText2=true;
-                        } 
-                    }
-                    else if (0 === resp.code) {
-                    }
-                })
-                .error(function (resp) {
-                    console.log(resp);
-                });
-            },1000);
-            
+                        else if (0 === resp.code) {
+                        }
+                    })
+                    .error(function (resp) {
+                        console.log(resp);
+                    });
+                },1000);
+                
+            }
+        }else{
+            $scope.$broadcast('scroll.infiniteScrollComplete');
         }
+        
     };
     $scope.goOfficeDetails=function(index){
         $state.go("officedetails",{activityid:index.id},{reload:true});
@@ -633,6 +753,22 @@ educationApp.controller('collectionCtrl', ['$scope','Http', 'Popup', '$rootScope
         $('.coll-tab-item-'+index).addClass("coll-tab-active");
         $('.y-collection-content').css({'display':'none'});
         $('.y-collection-content-'+index).css({'display':'block'});
+        if(index == 1){
+            $scope.scrollNum1=true;
+            $scope.scrollNum2=false;
+            $scope.scrollNum3=false;
+        }else if(index == 2){
+            $scope.scrollNum1=false;
+            $scope.scrollNum2=true;
+            $scope.scrollNum3=false;
+        }else if(index == 3){
+            $scope.scrollNum1=false;
+            $scope.scrollNum2=false;
+            $scope.scrollNum3=true;
+        }
+        $timeout(function(){
+            $ionicScrollDelegate.resize();
+        },1000);
     };
 }]);
 educationApp.controller('complaintsCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','User','$ionicViewSwitcher', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,User,$ionicViewSwitcher) {
@@ -645,8 +781,8 @@ educationApp.controller('complaintsCtrl', ['$scope','Http', 'Popup', '$rootScope
 	};
 	// 提交吐槽信息
     $scope.goComplaints = function () {
-        if ($('.complaintsText').val() == '' || $('.complaintsText').val().length<=9) {
-            Popup.alert('请至少填写10个字以上吐槽信息！');
+        if ($('.complaintsText').val() == '' || $('.complaintsText').val().length<=0) {
+            Popup.alert('请填写吐槽信息！');
             return;
         }else{
         	var data = {
@@ -658,6 +794,8 @@ educationApp.controller('complaintsCtrl', ['$scope','Http', 'Popup', '$rootScope
 				console.log(resp);
 				if (1 === resp.code) {
 					Popup.alert('感谢吐槽，我们一直在努力......');
+					$ionicHistory.goBack();
+	    			$ionicViewSwitcher.nextDirection("back");
 				}
 				else if (0 === resp.code) {
 				}
@@ -669,8 +807,23 @@ educationApp.controller('complaintsCtrl', ['$scope','Http', 'Popup', '$rootScope
         
     };
 }]);
+educationApp.controller('guideCtrl', ['$scope','$state','$ionicPlatform','$ionicViewSwitcher', function ($scope,$state,$ionicPlatform,$ionicViewSwitcher) {
+	console.log('引导控制器');
+	// $ionicPlatform.fullScreen(true,false);
+	// $ionicPlatform.showStatusBar(false);
+
+	if(!localStorage.getItem('isfirstLoad')){
+		console.log('引导~~~');
+	}
+	
+	$scope.goTab = function () {
+		localStorage.setItem('isfirstLoad', true);
+		$state.go('tab.micro-lesson');
+	};
+}]);
 educationApp.controller('loginCtrl',
-	['$scope','$rootScope', 'Http', 'Popup', 'User', '$http', '$state', '$ionicLoading', '$window', function ($scope, $rootScope, Http, Popup, User, $http, $state, $ionicLoading, $window) {
+	['$scope', '$rootScope', 'Http', 'Popup', 'User', '$http', '$state', '$ionicLoading', '$window', '$ionicHistory', '$ionicViewSwitcher',
+	function ($scope, $rootScope, Http, Popup, User, $http, $state, $ionicLoading, $window, $ionicHistory, $ionicViewSwitcher) {
 
 	$scope.user = {};
 
@@ -728,12 +881,12 @@ educationApp.controller('loginCtrl',
 		    				// 登录成功(用户已绑定手机号)
 		    				localStorage.setItem('isLogin', true);
 							localStorage.setItem('user', JSON.stringify(resp.data));
-		    				var confirm = Popup.alert('登录成功');
-							confirm.then(function () {
+		    				// var confirm = Popup.alert('登录成功');
+							// confirm.then(function () {
 								// $ionicHistory.goBack();
 								// $window.history.back();
 								$rootScope.$ionicGoBack();
-							});
+							// });
 		    			}
 		    			else if (2 === resp.code) {
 		    				// 微信授权成功，用户未绑定手机号，则跳转到手机号绑定页
@@ -811,6 +964,11 @@ educationApp.controller('loginCtrl',
 		        Popup.alert(failReason);
 			}, checkClientIsInstalled);
 		};
+
+	$scope.ionicBack= function () {
+	    $ionicHistory.goBack();
+	    $ionicViewSwitcher.nextDirection("back");
+	};
 }]);
 educationApp.controller('mapCtrl',
 	['$scope', '$state', '$location','$stateParams','$ionicHistory','$ionicViewSwitcher', function ($scope, $state, $location,$stateParams,$ionicHistory,$ionicViewSwitcher) {
@@ -821,7 +979,7 @@ educationApp.controller('mapCtrl',
    
     // 百度地图API功能
     var map = new BMap.Map("allmap");
-    map.centerAndZoom(new BMap.Point(116.404,39.915),11);
+    map.centerAndZoom(new BMap.Point(116.404,39.915),15);
     map.enableScrollWheelZoom(true);
     // 用经纬度设置地图中心点
     map.clearOverlays(); 
@@ -837,7 +995,7 @@ educationApp.controller('mapCtrl',
     };
 }]);
 educationApp.controller('meCtrl',
-    ['$scope', '$state', '$location', 'User','Http','Popup','$ionicViewSwitcher','$timeout', function ($scope, $state, $location, User,Http,Popup,$ionicViewSwitcher,$timeout) {
+    ['$scope', '$state', '$location', 'User','Http','Popup','$ionicViewSwitcher','$timeout','$ionicScrollDelegate', function ($scope, $state, $location, User,Http,Popup,$ionicViewSwitcher,$timeout,$ionicScrollDelegate) {
     console.log('我的控制器');
     $scope.isLogin = false;
     // 未登录提示语
@@ -846,9 +1004,12 @@ educationApp.controller('meCtrl',
     $scope.nocontent=true;
     $scope.nobuy=true;
     $scope.nosign=true;
-    $scope.noMorePage=false;
-    $scope.noMorePage1=false;
-    $scope.noMorePage2=false;
+    $scope.noMorePage=true;
+    $scope.noMorePage1=true;
+    $scope.noMorePage2=true;
+    $scope.scrollNum1=true;
+    $scope.scrollNum2=false;
+    $scope.scrollNum3=false;
     
     // 登录跳转
     $scope.goLogin = function(){
@@ -907,6 +1068,22 @@ educationApp.controller('meCtrl',
         $('.y-page').css({'display':'none'});
         $('.y-page-'+index).css({'display':'block'});
         sessionStorage.setItem('meTab',index);
+        if(index == 1){
+            $scope.scrollNum1=true;
+            $scope.scrollNum2=false;
+            $scope.scrollNum3=false;
+        }else if(index == 2){
+            $scope.scrollNum1=false;
+            $scope.scrollNum2=true;
+            $scope.scrollNum3=false;
+        }else if(index == 3){
+            $scope.scrollNum1=false;
+            $scope.scrollNum2=false;
+            $scope.scrollNum3=true;
+        }
+        $timeout(function(){
+            $ionicScrollDelegate.resize();
+        },1000);
     };
     // 判断登录状态
     Http.post('/user/mine.json')
@@ -914,9 +1091,6 @@ educationApp.controller('meCtrl',
         if (-1 === data.code) {
             console.log('用户未登录');
             // $state.go('login');
-            $scope.noMorePage=true;
-            $scope.noMorePage1=true;
-            $scope.noMorePage2=true;
         } else if (1 === data.code) {
             $scope.isLogin = true;
             if($scope.isLogin) {
@@ -933,12 +1107,24 @@ educationApp.controller('meCtrl',
                 // 判断显示状态
                 var meTab=JSON.parse(sessionStorage.getItem('meTab'));
                 if(meTab == null){
-                    return;
                 }else{
                     $('.y-meTab-item').removeClass("meTab-item-h");
                     $('.y-meTab-item-'+meTab).addClass("meTab-item-h");
                     $('.y-page').css({'display':'none'});
                     $('.y-page-'+meTab).css({'display':'block'});
+                    if(meTab == 1){
+                        $scope.scrollNum1=true;
+                        $scope.scrollNum2=false;
+                        $scope.scrollNum3=false;
+                    }else if(meTab == 2){
+                        $scope.scrollNum1=false;
+                        $scope.scrollNum2=true;
+                        $scope.scrollNum3=false;
+                    }else if(meTab == 3){
+                        $scope.scrollNum1=false;
+                        $scope.scrollNum2=false;
+                        $scope.scrollNum3=true;
+                    }
                 }
                 // 获取学习记录
                 $scope.studyList=[];
@@ -952,7 +1138,10 @@ educationApp.controller('meCtrl',
                     $state.go("boutiquedetail",{videoid:data.id},{reload:true});
                     $ionicViewSwitcher.nextDirection("forward");
                 };
-                
+                $scope.goSubDetail=function(index){
+                    $state.go("subscribdetails",{teacherid:index.teacherid},{reload:true});
+                    $ionicViewSwitcher.nextDirection("forward");
+                };
                 Http.post('/user/studyhistory.json',data)
                 .success(function (resp) {
                     console.log(resp);
@@ -973,6 +1162,7 @@ educationApp.controller('meCtrl',
                             $scope.noMorePage=true;
                         }else{
                             $scope.nocontent=false;
+                            $scope.noMorePage=false;
                         }
                     }
                     else if (-1 === resp.code) {
@@ -987,39 +1177,44 @@ educationApp.controller('meCtrl',
                 $scope.noMorePageText=false;
                 $scope.loading=false;
                 $scope.loadMore=function(){
-                    if(!$scope.loading){
-                        $scope.loading=true;
-                        $timeout(function(){
-                            Http.post('/user/studyhistory.json',{page:page})
-                            .success(function (resp) {
-                                console.log(resp);
-                                if (1 === resp.code) {
-                                    var studyhistoryList = resp.data.studyhistorylist;
-                                    for (var i = 0; i < studyhistoryList.length; i++) {
-                                        if(studyhistoryList[i].type == 0){//专栏学习记录
-                                            studyhistoryList[i].scolumn.imgurl = picBasePath + studyhistoryList[i].scolumn.imgurl;
-                                            $scope.studyList.push(studyhistoryList[i]);
-                                        }else{//视频学习记录
-                                            studyhistoryList[i].video.imgurl = picBasePath + studyhistoryList[i].video.imgurl;
-                                            $scope.studyVideoList.push(studyhistoryList[i]);
+                    if($scope.scrollNum1){
+                        if(!$scope.loading){
+                            $scope.loading=true;
+                            $timeout(function(){
+                                Http.post('/user/studyhistory.json',{page:page})
+                                .success(function (resp) {
+                                    console.log(resp);
+                                    if (1 === resp.code) {
+                                        var studyhistoryList = resp.data.studyhistorylist;
+                                        for (var i = 0; i < studyhistoryList.length; i++) {
+                                            if(studyhistoryList[i].type == 0){//专栏学习记录
+                                                studyhistoryList[i].scolumn.imgurl = picBasePath + studyhistoryList[i].scolumn.imgurl;
+                                                $scope.studyList.push(studyhistoryList[i]);
+                                            }else{//视频学习记录
+                                                studyhistoryList[i].video.imgurl = picBasePath + studyhistoryList[i].video.imgurl;
+                                                $scope.studyVideoList.push(studyhistoryList[i]);
+                                            }
                                         }
+                                        page+=1;
+                                        $scope.$broadcast('scroll.infiniteScrollComplete');
+                                        $scope.loading=false;
+                                        if (studyhistoryList.length === 0) {
+                                            $scope.noMorePage=true;//禁止滚动触发事件
+                                            $scope.noMorePageText=true;
+                                        } 
                                     }
-                                    page+=1;
-                                    $scope.$broadcast('scroll.infiniteScrollComplete');
-                                    $scope.loading=false;
-                                    if (studyhistoryList.length === 0) {
-                                        $scope.noMorePage=true;//禁止滚动触发事件
-                                        $scope.noMorePageText=true;
-                                    } 
-                                }
-                                else if (0 === resp.code) {
-                                }
-                            })
-                            .error(function (resp) {
-                                console.log(resp);
-                            });
-                        },1000);
+                                    else if (0 === resp.code) {
+                                    }
+                                })
+                                .error(function (resp) {
+                                    console.log(resp);
+                                });
+                            },1000);
+                        }
+                    }else{
+                        $scope.$broadcast('scroll.infiniteScrollComplete');
                     }
+                    
                 };
                 // 获取购买记录
                 $scope.buyList=[];
@@ -1042,6 +1237,7 @@ educationApp.controller('meCtrl',
                             $scope.noMorePage1=true;
                         }else{
                             $scope.nobuy=false;
+                            $scope.noMorePage1=false;
                         }
                     }
                     else if (-1 === resp.code) {
@@ -1055,35 +1251,40 @@ educationApp.controller('meCtrl',
                 $scope.noMorePageText1=false;
                 $scope.loading1=false;
                 $scope.loadMore1=function(){
-                    if(!$scope.loading1){
-                        $scope.loading1=true;
-                        $timeout(function(){
-                            Http.post('/video/myvideolist.json',{page:page1})
-                            .success(function (resp) {
-                                console.log(resp);
-                                if (1 === resp.code) {
-                                    var videoList = resp.data.videolist;
-                                    for (var i = 0; i < videoList.length; i++) {
-                                        videoList[i].imgurl = picBasePath + videoList[i].imgurl;
-                                        $scope.buyList.push(videoList[i]);
+                    if($scope.scrollNum2){
+                        if(!$scope.loading1){
+                            $scope.loading1=true;
+                            $timeout(function(){
+                                Http.post('/video/myvideolist.json',{page:page1})
+                                .success(function (resp) {
+                                    console.log(resp);
+                                    if (1 === resp.code) {
+                                        var videoList = resp.data.videolist;
+                                        for (var i = 0; i < videoList.length; i++) {
+                                            videoList[i].imgurl = picBasePath + videoList[i].imgurl;
+                                            $scope.buyList.push(videoList[i]);
+                                        }
+                                        page1+=1;
+                                        $scope.$broadcast('scroll.infiniteScrollComplete');
+                                        $scope.loading1=false;
+                                        if (videoList.length === 0) {
+                                            $scope.noMorePage1=true;//禁止滚动触发事件
+                                            $scope.noMorePageText1=true;
+                                        } 
                                     }
-                                    page1+=1;
-                                    $scope.$broadcast('scroll.infiniteScrollComplete');
-                                    $scope.loading1=false;
-                                    if (videoList.length === 0) {
-                                        $scope.noMorePage1=true;//禁止滚动触发事件
-                                        $scope.noMorePageText1=true;
-                                    } 
-                                }
-                                else if (0 === resp.code) {
-                                }
-                            })
-                            .error(function (resp) {
-                                console.log(resp);
-                            });
-                        },1000);
-                        
+                                    else if (0 === resp.code) {
+                                    }
+                                })
+                                .error(function (resp) {
+                                    console.log(resp);
+                                });
+                            },1000);
+                            
+                        }
+                    }else{
+                        $scope.$broadcast('scroll.infiniteScrollComplete');
                     }
+                    
                 };
                 // 获取报名记录
                 $scope.signList=[];
@@ -1106,6 +1307,7 @@ educationApp.controller('meCtrl',
                             $scope.noMorePage2=true;
                         }else{
                             $scope.nosign=false;
+                            $scope.noMorePage2=false;
                         }
                     }
                     else if (-1 === resp.code) {
@@ -1119,35 +1321,40 @@ educationApp.controller('meCtrl',
                 $scope.noMorePageText2=false;
                 $scope.loading2=false;
                 $scope.loadMore2=function(){
-                    if(!$scope.loading2){
-                        $scope.loading2=true;
-                        $timeout(function(){
-                            Http.post('/activity/myactivitylist.json',{page:page2})
-                            .success(function (resp) {
-                                console.log(resp);
-                                if (1 === resp.code) {
-                                    var activityList = resp.data.activitylist;
-                                    for (var i = 0; i < activityList.length; i++) {
-                                        activityList[i].imgurl = picBasePath + activityList[i].imgurl;
-                                        $scope.signList.push(activityList[i]);
+                    if($scope.scrollNum3){
+                        if(!$scope.loading2){
+                            $scope.loading2=true;
+                            $timeout(function(){
+                                Http.post('/activity/myactivitylist.json',{page:page2})
+                                .success(function (resp) {
+                                    console.log(resp);
+                                    if (1 === resp.code) {
+                                        var activityList = resp.data.activitylist;
+                                        for (var i = 0; i < activityList.length; i++) {
+                                            activityList[i].imgurl = picBasePath + activityList[i].imgurl;
+                                            $scope.signList.push(activityList[i]);
+                                        }
+                                        page2+=1;
+                                        $scope.$broadcast('scroll.infiniteScrollComplete');
+                                        $scope.loading2=false;
+                                        if (activityList.length === 0) {
+                                            $scope.noMorePage2=true;//禁止滚动触发事件
+                                            $scope.noMorePageText2=true;
+                                        } 
                                     }
-                                    page2+=1;
-                                    $scope.$broadcast('scroll.infiniteScrollComplete');
-                                    $scope.loading2=false;
-                                    if (activityList.length === 0) {
-                                        $scope.noMorePage2=true;//禁止滚动触发事件
-                                        $scope.noMorePageText2=true;
-                                    } 
-                                }
-                                else if (0 === resp.code) {
-                                }
-                            })
-                            .error(function (resp) {
-                                console.log(resp);
-                            });
-                        },1000);
-                        
+                                    else if (0 === resp.code) {
+                                    }
+                                })
+                                .error(function (resp) {
+                                    console.log(resp);
+                                });
+                            },1000);
+                            
+                        }
+                    }else{
+                        $scope.$broadcast('scroll.infiniteScrollComplete');
                     }
+                    
                 };
             }
         }
@@ -1158,14 +1365,16 @@ educationApp.controller('meCtrl',
     
     
 }]);
-educationApp.controller('microLessonCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$timeout','$ionicSlideBoxDelegate','$ionicViewSwitcher', function ($scope, Http, Popup, $rootScope,$state,$timeout,$ionicSlideBoxDelegate,$ionicViewSwitcher) {
+educationApp.controller('microLessonCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$timeout','$ionicSlideBoxDelegate','$ionicViewSwitcher','$ionicScrollDelegate', function ($scope, Http, Popup, $rootScope,$state,$timeout,$ionicSlideBoxDelegate,$ionicViewSwitcher,$ionicScrollDelegate) {
 	console.log('小悦微课控制器');
-	
+	$scope.scrollNum2=false;
+	$scope.scrollNum3=false;
+	$scope.scrollNum4=false;
 	// 轮播图
 	$scope.bannerList = {};
 	Http.post('/page/unl/choosead.json')
 	.success(function (resp) {
-		console.log(resp);
+		// console.log(resp);
 		if (1 === resp.code) {
 			var homeAdList = resp.data.adlist;
 			for (var i = 0; i < homeAdList.length; i++) {
@@ -1200,6 +1409,19 @@ educationApp.controller('microLessonCtrl', ['$scope','Http', 'Popup', '$rootScop
 		$('.home-tab-item-'+tabNum).addClass("home-tab-active");
 		$('.y-home-content').css({'display':'none'});
 		$('.y-home-content-'+tabNum).css({'display':'block'});
+		if(tabNum == 2){
+			$scope.scrollNum2=true;
+			$scope.scrollNum3=false;
+			$scope.scrollNum4=false;
+		}else if(tabNum == 3){
+			$scope.scrollNum2=false;
+			$scope.scrollNum3=true;
+			$scope.scrollNum4=false;
+		}else if(tabNum == 4){
+			$scope.scrollNum2=false;
+			$scope.scrollNum3=false;
+			$scope.scrollNum4=true;
+		}
 	}
 	// 专栏订阅
 	$scope.subDesignerList = {};
@@ -1251,7 +1473,7 @@ educationApp.controller('microLessonCtrl', ['$scope','Http', 'Popup', '$rootScop
 	$scope.recomList = {};
 	Http.post('/page/unl/choosehotvideo.json')
 	.success(function (resp) {
-		// console.log(resp);
+		console.log(resp);
 		if (1 === resp.code) {
 			var hotvideoList = resp.data.hotvideolist;
 			for (var i = 0; i < hotvideoList.length; i++) {
@@ -1297,7 +1519,22 @@ educationApp.controller('microLessonCtrl', ['$scope','Http', 'Popup', '$rootScop
 			.error(function (resp) {
 				// console.log(resp);
 			});
-		};
+		}else if(index == 2){
+			$scope.scrollNum2=true;
+			$scope.scrollNum3=false;
+			$scope.scrollNum4=false;
+		}else if(index == 3){
+			$scope.scrollNum2=false;
+			$scope.scrollNum3=true;
+			$scope.scrollNum4=false;
+		}else if(index == 4){
+			$scope.scrollNum2=false;
+			$scope.scrollNum3=false;
+			$scope.scrollNum4=true;
+		}
+		$timeout(function(){
+            $ionicScrollDelegate.resize();
+        },1000);
 	}
 		
 	// 付费精品模块
@@ -1384,23 +1621,108 @@ educationApp.controller('microLessonCtrl', ['$scope','Http', 'Popup', '$rootScop
 	$scope.noMorePage=false;
 	$scope.loading=false;
 	$scope.loadMore=function(){
-	 	if(!$scope.loading){
-			$scope.loading=true;
-			$timeout(function(){
-				Http.post('/page/unl/payvidedo.json',{page:boutiquePage})
+		if($scope.noMorePage){
+			$scope.$broadcast('scroll.infiniteScrollComplete');
+			return;
+		}else{
+			if($scope.scrollNum2){
+				if(!$scope.loading){
+					$scope.loading=true;
+					$timeout(function(){
+						Http.post('/page/unl/payvidedo.json',{page:boutiquePage})
+						.success(function (resp) {
+							console.log(resp);
+							if (1 === resp.code) {
+								var payvidedoList = resp.data.payvidedolist;
+								for (var i = 0; i < payvidedoList.length; i++) {
+									payvidedoList[i].imgurl = picBasePath + payvidedoList[i].imgurl;
+									$scope.boutiqueList.push(payvidedoList[i]);
+								}
+								boutiquePage+=1;
+								$scope.$broadcast('scroll.infiniteScrollComplete');
+								$scope.loading=false;
+								if (payvidedoList.length === 0) {
+					                $scope.noMorePage=true;//禁止滚动触发事件
+					            } 
+							}
+							else if (0 === resp.code) {
+							}
+						})
+						.error(function (resp) {
+							console.log(resp);
+						});
+					},1000);
+					
+				}
+			}else{
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+			}
+		}
+		
+	 	
+	};
+	// 公开课上拉加载
+	$scope.noMorePage1=false;
+	$scope.loading1=false;
+	$scope.loadMore1=function(){
+		if($scope.noMorePage1){
+			$scope.$broadcast('scroll.infiniteScrollComplete');
+			return;
+		}else{
+			if($scope.scrollNum3){
+				if(!$scope.loading1){
+					$scope.loading1=true;
+					Http.post('/page/unl/freevidedo.json',{page:publicPage})
+					.success(function (resp) {
+						console.log(resp);
+						if (1 === resp.code) {
+							var freevidedoList = resp.data.freevidedolist;
+							for (var i = 0; i < freevidedoList.length; i++) {
+								freevidedoList[i].imgurl = picBasePath + freevidedoList[i].imgurl;
+								$scope.publicList.push(freevidedoList[i]);
+							}
+							publicPage+=1;
+							$scope.$broadcast('scroll.infiniteScrollComplete');
+							$scope.loading1=false;
+							if (freevidedoList.length === 0) {
+				                $scope.noMorePage1=true;//禁止滚动触发事件
+				            } 
+						}
+						else if (0 === resp.code) {
+						}
+					})
+					.error(function (resp) {
+						console.log(resp);
+					});
+				}
+			}else{
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+			}
+		}
+		
+	 	
+	};
+	// 课程表上拉加载
+	$scope.noMorePage2=false;
+	$scope.loading2=false;
+	$scope.loadMore2=function(){
+		if($scope.scrollNum4){
+			if(!$scope.loading2){
+				$scope.loading2=true;
+				Http.post('/page/unl/schedule.json',{page:curriculumPage})
 				.success(function (resp) {
 					console.log(resp);
 					if (1 === resp.code) {
-						var payvidedoList = resp.data.payvidedolist;
-						for (var i = 0; i < payvidedoList.length; i++) {
-							payvidedoList[i].imgurl = picBasePath + payvidedoList[i].imgurl;
-							$scope.boutiqueList.push(payvidedoList[i]);
+						var currList = resp.data.freevidedolist;
+						for (var i = 0; i < currList.length; i++) {
+							currList[i].imgurl = picBasePath + currList[i].imgurl;
+							$scope.curriculumList.push(currList[i]);
 						}
-						boutiquePage+=1;
+						curriculumPage+=1;
 						$scope.$broadcast('scroll.infiniteScrollComplete');
-						$scope.loading=false;
-						if (payvidedoList.length === 0) {
-			                $scope.noMorePage=true;//禁止滚动触发事件
+						$scope.loading2=false;
+						if (currList.length === 0) {
+			                $scope.noMorePage2=true;//禁止滚动触发事件
 			            } 
 					}
 					else if (0 === resp.code) {
@@ -1409,93 +1731,175 @@ educationApp.controller('microLessonCtrl', ['$scope','Http', 'Popup', '$rootScop
 				.error(function (resp) {
 					console.log(resp);
 				});
-			},1000);
-			
+			}
+		}else{
+			$scope.$broadcast('scroll.infiniteScrollComplete');
 		}
+	 	
 	};
-	// 公开课上拉加载
-	$scope.noMorePage1=false;
-	$scope.loading1=false;
-	$scope.loadMore1=function(){
-	 	if(!$scope.loading1){
-			$scope.loading1=true;
-			Http.post('/page/unl/freevidedo.json',{page:publicPage})
-			.success(function (resp) {
-				console.log(resp);
-				if (1 === resp.code) {
-					var freevidedoList = resp.data.freevidedolist;
-					for (var i = 0; i < freevidedoList.length; i++) {
-						freevidedoList[i].imgurl = picBasePath + freevidedoList[i].imgurl;
-						$scope.publicList.push(freevidedoList[i]);
-					}
-					publicPage+=1;
-					$scope.$broadcast('scroll.infiniteScrollComplete');
-					$scope.loading1=false;
-					if (freevidedoList.length === 0) {
-		                $scope.noMorePage1=true;//禁止滚动触发事件
-		            } 
-				}
-				else if (0 === resp.code) {
-				}
-			})
-			.error(function (resp) {
-				console.log(resp);
-			});
-		}
-	};
-	// 课程表上拉加载
-	$scope.noMorePage2=false;
-	$scope.loading2=false;
-	$scope.loadMore2=function(){
-	 	if(!$scope.loading2){
-			$scope.loading2=true;
-			Http.post('/page/unl/schedule.json',{page:curriculumPage})
-			.success(function (resp) {
-				console.log(resp);
-				if (1 === resp.code) {
-					var currList = resp.data.freevidedolist;
-					for (var i = 0; i < currList.length; i++) {
-						currList[i].imgurl = picBasePath + currList[i].imgurl;
-						$scope.curriculumList.push(currList[i]);
-					}
-					curriculumPage+=1;
-					$scope.$broadcast('scroll.infiniteScrollComplete');
-					$scope.loading2=false;
-					if (currList.length === 0) {
-		                $scope.noMorePage2=true;//禁止滚动触发事件
-		            } 
-				}
-				else if (0 === resp.code) {
-				}
-			})
-			.error(function (resp) {
-				console.log(resp);
-			});
-		}
-	};
+	$scope.bannerJump=function(banner){
+		var index=banner.jumpflag;
+		switch (index) {
+			case 0:
+				// 图文
+				// window.location.href=banner.type;
+				break;
+			case 1:
+				// 链接
+				// window.location.href=banner.jumpurl;
+				break;
+			case 21:
+				// 专题1列表
+				$state.go("area",{topicid:$scope.specialList[0].id,topicname:$scope.specialList[0].name,},{reload:true});
+				$ionicViewSwitcher.nextDirection("forward");
+				break;
+			case 22:
+				// 专题2列表
+				$state.go("area",{topicid:$scope.specialList[1].id,topicname:$scope.specialList[1].name,},{reload:true});
+				$ionicViewSwitcher.nextDirection("forward");
+				break;
+			case 23:
+				// 专题3列表
+				$state.go("area",{topicid:$scope.specialList[2].id,topicname:$scope.specialList[2].name,},{reload:true});
+				$ionicViewSwitcher.nextDirection("forward");
+				break;
+			case 24:
+				// 专题4列表
+				$state.go("area",{topicid:$scope.specialList[3].id,topicname:$scope.specialList[3].name,},{reload:true});
+				$ionicViewSwitcher.nextDirection("forward");
+				break;
+			case 3:
+				// 付费精品列表
+				$scope.homeSwitch(2);
+				break;
+			case 4:
+				// 线下课列表
+				$scope.homeSwitch(3);
+				break;
+			case 5:
+				// 课程表
+				$scope.homeSwitch(4);
+				break;
+			case 6:
+				// vip表
+				$state.go("vip",{reload:true});
+            	$ionicViewSwitcher.nextDirection("forward");
+				break;
+			case 99:
+				// 不跳转
+				break;
 
+		}
+	};
+	// 付费列表下拉刷新
+	$scope.doRefresh = function() {
+        // 付费精品模块
+		var boutiquePage=1;
+		var data = {
+			page:boutiquePage
+		};
+		Http.post('/page/unl/payvidedo.json',data)
+		.success(function (resp) {
+			// console.log(resp);
+			if (1 === resp.code) {
+				var payvidedoList = resp.data.payvidedolist;
+				for (var i = 0; i < payvidedoList.length; i++) {
+					payvidedoList[i].imgurl = picBasePath + payvidedoList[i].imgurl;
+				}
+				$scope.boutiqueList = {};
+				$scope.boutiqueList = payvidedoList;
+				boutiquePage++;
+				$scope.noMorePage=false;
+			}
+			else if (0 === resp.code) {
+			}
+		})
+		.finally(function() {
+            $scope.$broadcast('scroll.refreshComplete');
+        });
+    };
+    // 公开课下拉刷新
+	$scope.doRefresh1 = function() {
+        // 公开课模块
+		var publicPage=1;
+		var data = {
+			page:publicPage
+		};
+		Http.post('/page/unl/freevidedo.json',data)
+		.success(function (resp) {
+			// console.log(resp);
+			if (1 === resp.code) {
+				var freevidedoList = resp.data.freevidedolist;
+				for (var i = 0; i < freevidedoList.length; i++) {
+					freevidedoList[i].imgurl = picBasePath + freevidedoList[i].imgurl;
+				}
+				$scope.publicList = {};
+				$scope.publicList = freevidedoList;
+				publicPage++;
+				// $scope.noMorePage1=false;
+			}
+			else if (0 === resp.code) {
+			}
+		}).finally(function() {
+            $scope.$broadcast('scroll.refreshComplete');
+        });
+    };
+    // 课程表模块下拉刷新
+	$scope.doRefresh2 = function() {
+       // 课程表模块
+		var curriculumPage=1;
+		var data = {
+			page:curriculumPage
+		};
+		Http.post('/page/unl/schedule.json',data)
+		.success(function (resp) {
+			// console.log(resp);
+			if (1 === resp.code) {
+				var currList = resp.data.freevidedolist;
+				for (var i = 0; i < currList.length; i++) {
+					currList[i].imgurl = picBasePath + currList[i].imgurl;
+				}
+				$scope.curriculumList = {};
+				$scope.curriculumList = currList;
+				curriculumPage++;
+				$scope.noMorePage2=false;
+			}
+			else if (0 === resp.code) {
+			}
+		})
+		.finally(function() {
+            $scope.$broadcast('scroll.refreshComplete');
+        });
+    };
 }]);
-educationApp.controller('officedetailCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$ionicActionSheet', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$ionicActionSheet) {
+educationApp.controller('officedetailCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$ionicActionSheet','$ionicModal', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$ionicActionSheet,$ionicModal) {
 	console.log('线下课详情');
 	var activityId=$stateParams.activityid;
 	$scope.boutiDetailList = {};
 	$scope.priceType = false;
 	$scope.showPrice = true;
+	$scope.status = true;
 	var data = {
 		activityid:activityId
 	};
 	Http.post('/page/unl/activitydetail.json',data)
 	.success(function (resp) {
-		// console.log(resp);
+		console.log(resp);
 		if (1 === resp.code) {
 			resp.data.teacheravatar=picBasePath + resp.data.teacheravatar;
+			resp.data.imgurl=picBasePath + resp.data.imgurl;
 			$scope.boutiDetailList =resp.data;
+			$scope.boutiDetailList.teacherdescribe=$scope.boutiDetailList.teacherdescribe.split("\n");
+			$scope.boutiDetailList.detail=$scope.boutiDetailList.detail.split("\n");
 			var priceType=parseInt(resp.data.price);
 			if(priceType>=0 || $scope.boutiDetailList.price == '免费'){
 				$scope.priceType = true;
 			}
 			if($scope.boutiDetailList.price == '免费'){
 				$scope.showPrice = false;
+			}
+			if($scope.boutiDetailList.status == '已过期'){
+				$scope.status = false;
 			}
 		}
 		else if (0 === resp.code) {
@@ -1617,7 +2021,20 @@ educationApp.controller('officedetailCtrl', ['$scope','Http', 'Popup', '$rootSco
 			console.log('数据请求失败，请稍后再试！');
 		});
 	};
-	
+	$ionicModal.fromTemplateUrl('templates/modal.html', {
+	  scope: $scope
+	}).then(function(modal) {
+	  $scope.modal = modal;
+	});
+	// 头像放大
+	$scope.enlarge=function(url){
+		$scope.modal.show();
+		$scope.enlargeImg=url;
+	};
+	// 头像放大
+	$scope.hideModal=function(){
+		$scope.modal.hide();
+	};
 }]);
 educationApp.controller('offlineLessonCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$ionicViewSwitcher','$timeout', function ($scope, Http, Popup, $rootScope,$state,$ionicViewSwitcher,$timeout) {
 	console.log('线下课控制器');
@@ -1629,7 +2046,7 @@ educationApp.controller('offlineLessonCtrl', ['$scope','Http', 'Popup', '$rootSc
 	};
 	Http.post('/page/unl/activitylist.json',data)
 	.success(function (resp) {
-		// console.log(resp);
+		console.log(resp);
 		if (1 === resp.code) {
 			var activityList = resp.data.activitylist;
 			for (var i = 0; i < activityList.length; i++) {
@@ -1680,6 +2097,32 @@ educationApp.controller('offlineLessonCtrl', ['$scope','Http', 'Popup', '$rootSc
 		    },1000);
 		}
 	};
+	// 下拉刷新
+	$scope.doRefresh = function() {
+		var page=1;
+		var data = {
+			page:page
+		};
+		Http.post('/page/unl/activitylist.json',data)
+		.success(function (resp) {
+			console.log(resp);
+			if (1 === resp.code) {
+				var activityList = resp.data.activitylist;
+				for (var i = 0; i < activityList.length; i++) {
+					activityList[i].imgurl = picBasePath + activityList[i].imgurl;
+				}
+				$scope.lineList = {};
+				$scope.lineList = activityList;
+				page++;
+				$scope.noMorePage=false;
+			}
+			else if (0 === resp.code) {
+			}
+		})
+		.finally(function() {
+            $scope.$broadcast('scroll.refreshComplete');
+        });
+    };
 }]);
 educationApp.controller('payactivityCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher) {
 	console.log('活动支付');
@@ -1723,6 +2166,41 @@ educationApp.controller('payactivityCtrl', ['$scope','Http', 'Popup', '$rootScop
 	.error(function (resp) {
 		console.log(resp);
 	});
+
+	$scope.payActivity = function (orderID) {
+		var data = {
+			type: 'wx',
+			orderid: orderID
+		};
+		Http.post('/pay/prepay.json', data)
+		.success(function (resp) {
+			if (1 === resp.code) {
+				var data = resp.data;
+				// 预支付成功
+				var params = {
+				    partnerid: data.partnerid, // merchant id
+				    prepayid: data.prepayid, // prepay id
+				    noncestr: data.noncestr, // nonce
+				    timestamp: data.timestamp, // timestamp
+				    sign: data.sign, // signed string
+				};
+				Wechat.sendPaymentRequest(params, function () {
+				    var confirm = Popup.alert("支付成功！");
+				    confirm.then(function () {
+				    	// 这里支付成功后的逻辑是什么
+				    	$state.go("activitydetail",{useractivityid:$scope.subDetailList.id},{reload:true});
+                   		$ionicViewSwitcher.nextDirection("forward");
+				    });
+
+				}, function (reason) {
+				    Popup.alert("Failed: " + reason);
+				});
+			}
+		})
+		.error(function (){
+			Popup.alert('数据请求失败，请稍后再试');
+		});
+	}
 	
 	// 返回上一页
 	$scope.ionicBack= function () {
@@ -1775,6 +2253,41 @@ educationApp.controller('payvipCtrl', ['$scope','Http', 'Popup', '$rootScope','$
 	.error(function (resp) {
 		console.log(resp);
 	});
+
+	$scope.payVIP = function (orderID) {
+		var data = {
+			type: 'wx',
+			orderid: orderID
+		};
+		Http.post('/pay/prepay.json', data)
+		.success(function (resp) {
+			if (1 === resp.code) {
+				var data = resp.data;
+				// 预支付成功
+				var params = {
+				    partnerid: data.partnerid, // merchant id
+				    prepayid: data.prepayid, // prepay id
+				    noncestr: data.noncestr, // nonce
+				    timestamp: data.timestamp, // timestamp
+				    sign: data.sign, // signed string
+				};
+				Wechat.sendPaymentRequest(params, function () {
+				    var confirm = Popup.alert("支付成功！");
+				    confirm.then(function () {
+				    	// 这里支付成功后的逻辑是什么，暂时跳转到我的
+				    	$state.go("vip",{reload:true});
+            			$ionicViewSwitcher.nextDirection("forward");
+				    });
+
+				}, function (reason) {
+				    Popup.alert("Failed: " + reason);
+				});
+			}
+		})
+		.error(function (){
+			Popup.alert('数据请求失败，请稍后再试');
+		});
+	}
 	
 	// 返回上一页
 	$scope.ionicBack= function () {
@@ -1905,6 +2418,8 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
             localStorage.removeItem('user');
             localStorage.setItem('user', JSON.stringify(resp.data));
             Popup.alert('保存个人信息成功！');
+            $state.go("tab.me",{reload:true});
+            $ionicViewSwitcher.nextDirection("forward");
           }
           else if (0 === resp.code) {
           }
@@ -1978,7 +2493,7 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
         $cordovaCamera.getPicture(options)
             .then(function (imageURI) {
                 //Success
-                $scope.userInfo.avatar = imageURI;
+                $scope.userInfo.avatar = imageURI.split('?')[0];
                 $scope.uploadPhoto();
             }, function (err) {
                 // Error
@@ -1992,7 +2507,7 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
         var server = encodeURI('http://101.200.205.162:8889/user/edit.json' + requestParams);
         var fileURL = $scope.userInfo.avatar;
         var options = {
-            fileKey: "file",//相当于form表单项的name属性
+            fileKey: "avatar",//相当于form表单项的name属性
             fileName: fileURL.substr(fileURL.lastIndexOf('/') + 1),
             mimeType: "image/jpeg"
         };
@@ -2005,6 +2520,18 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
         .then(function (result) {
             // Success!
             Popup.alert('上传成功');
+            Http.post('/user/mine.json')
+            .success(function (resp) {
+                if (-1 === resp.code) {
+                    // $state.go('login');
+                } else if (1 === resp.code) {
+                    localStorage.removeItem('user');
+                    localStorage.setItem('user', JSON.stringify(resp.data));
+                }
+            })
+            .error(function (resp) {
+                console.log('数据请求失败，请稍后再试！');
+            });
         }, function (err) {
             // Error
             Popup.alert("上传失败: Code = " + error.code);
@@ -2016,7 +2543,7 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
 
 
 }]);
-educationApp.controller('publicdetailsCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$ionicActionSheet','$sce', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$ionicActionSheet,$sce) {
+educationApp.controller('publicdetailsCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$ionicActionSheet','$sce','$ionicModal', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$ionicActionSheet,$sce,$ionicModal) {
 	console.log('公开课视频详情');
 	var videoId=$stateParams.videoid;
 	$scope.boutiDetailList = {};
@@ -2026,7 +2553,7 @@ educationApp.controller('publicdetailsCtrl', ['$scope','Http', 'Popup', '$rootSc
 	};
 	Http.post('/unl/playurl.json',data1)
 	.success(function (resp) {
-		// console.log(resp);
+		console.log(resp);
 		if (1 === resp.code) {
 			$scope.videoInfo=resp.data;
 		}
@@ -2037,7 +2564,7 @@ educationApp.controller('publicdetailsCtrl', ['$scope','Http', 'Popup', '$rootSc
 		console.log(resp);
 	});
 	// 对视频添加信任
-	$scope.videoUrl = function(url){  
+	$scope.videoUrl = function(url){ 
         return $sce.trustAsResourceUrl(url);  
     };
     // 获取视频信息
@@ -2046,11 +2573,12 @@ educationApp.controller('publicdetailsCtrl', ['$scope','Http', 'Popup', '$rootSc
 	};
 	Http.post('/page/unl/videodetail.json',data)
 	.success(function (resp) {
-		console.log(resp);
+		// console.log(resp);
 		if (1 === resp.code) {
 			resp.data.teacheravatar=picBasePath + resp.data.teacheravatar;
 			resp.data.imgurl=picBasePath + resp.data.imgurl;
 			$scope.boutiDetailList =resp.data;
+			$scope.boutiDetailList.teacherdescribe=$scope.boutiDetailList.teacherdescribe.split("\n");
 		}
 		else if (0 === resp.code) {
 		}
@@ -2169,6 +2697,20 @@ educationApp.controller('publicdetailsCtrl', ['$scope','Http', 'Popup', '$rootSc
 	    $ionicHistory.goBack();
 	    $ionicViewSwitcher.nextDirection("back");
 	};
+	$ionicModal.fromTemplateUrl('templates/modal.html', {
+	  scope: $scope
+	}).then(function(modal) {
+	  $scope.modal = modal;
+	});
+	// 头像放大
+	$scope.enlarge=function(url){
+		$scope.modal.show();
+		$scope.enlargeImg=url;
+	};
+	// 头像放大
+	$scope.hideModal=function(){
+		$scope.modal.hide();
+	};
 }]);
 educationApp.controller('publicCtrl', ['$scope','Http', 'Popup', '$rootScope', function ($scope, Http, Popup, $rootScope) {
 	console.log('公开课控制器');
@@ -2200,9 +2742,24 @@ educationApp.controller('registrationCtrl', ['$scope','Http', 'Popup', '$rootSco
     console.log('填写参加人信息');
     // 获取线下课信息
     var activityId=$stateParams.activityid;
-    console.log(activityId);
+    // console.log(activityId);
     var phoneRe = /^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/;
     var pwdRe = /^[0-9a-zA-Z_]{6,20}/;
+    var data = {
+        activityid:activityId
+    };
+    Http.post('/page/unl/activitydetail.json',data)
+    .success(function (resp) {
+        console.log(resp);
+        if (1 === resp.code) {
+            $scope.boutiDetailList =resp.data;
+        }
+        else if (0 === resp.code) {
+        }
+    })
+    .error(function (resp) {
+        console.log(resp);
+    });
     // 返回上一页
     $scope.ionicBack= function () {
         $ionicHistory.goBack();
@@ -2233,10 +2790,33 @@ educationApp.controller('registrationCtrl', ['$scope','Http', 'Popup', '$rootSco
              return;
          }
          console.log('跳转支付');
-        $state.go('payactivity'
-            ,{activityid:activityId, name:username, telephone:userphone, company:Company, job:Job}
-            ,{reload:true});
-        $ionicViewSwitcher.nextDirection("forward");
+         if($scope.boutiDetailList.price == '免费'){
+            var data1 = {
+                activityid:activityId,
+                name:$('.username').val(),
+                telephone:$('.userphone').val(),
+                company :$('.company').val(),
+                job:$('.profession').val()
+            };
+            Http.post('/activity/add.json',data1)
+            .success(function (resp) {
+                // console.log(resp);
+                if (1 === resp.code) {
+                   $state.go("activitydetail",{useractivityid:resp.data.id},{reload:true});
+                   $ionicViewSwitcher.nextDirection("forward");
+                }
+                else if (0 === resp.code) {
+                }
+            })
+            .error(function (resp) {
+                console.log(resp);
+            });
+         }else{
+            $state.go('payactivity'
+                ,{activityid:activityId, name:username, telephone:userphone, company:Company, job:Job}
+                ,{reload:true});
+            $ionicViewSwitcher.nextDirection("forward");
+         }
      };
 }]);
 educationApp.controller('setUpCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','User','$ionicViewSwitcher', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,User,$ionicViewSwitcher) {
@@ -2256,29 +2836,47 @@ educationApp.controller('setUpCtrl', ['$scope','Http', 'Popup', '$rootScope','$s
 	    $ionicViewSwitcher.nextDirection("forward");
 	};
 }]);
-educationApp.controller('subscribdetailsCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$ionicActionSheet','$sce','$timeout', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$ionicActionSheet,$sce,$timeout) {
+educationApp.controller('startUpCtrl', ['$scope','$state','$timeout','$ionicPlatform', function ($scope,$state,$timeout,$ionicPlatform) {
+	console.log('启动控制器');
+	// $ionicPlatform.fullScreen(true,false);
+	// $ionicPlatform.showStatusBar(false);
+	$timeout(function () {
+		if (!localStorage.getItem('isfirstLoad')) {
+			$state.go('guide');
+		} else {
+			$state.go('tab.micro-lesson');
+		}
+	}, 1000);
+	
+	$scope.goTab = function () {
+		$state.go('tab.micro-lesson');
+	};
+}]);
+educationApp.controller('subscribdetailsCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$ionicActionSheet','$sce','$timeout','$ionicModal', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$ionicActionSheet,$sce,$timeout,$ionicModal) {
 	console.log('专栏订阅详情');
 	var teacherId=$stateParams.teacherid;
 	$scope.subDetailList = {};
+	$scope.describe={};
 	$scope.showPrice = true;
 	$('.y-bPage').css({'display':'none'});
     $('.y-page-1').css({'display':'block'});
+    $('.y-endplay').css({'display':'none'});
 	// 视频功能
-	var data1 = {
-		columnid:teacherId
-	};
-	Http.post('/unl/playurl.json',data1)
-	.success(function (resp) {
-		console.log(resp);
-		if (1 === resp.code) {
-			$scope.videoInfo=resp.data;
-		}
-		else if (0 === resp.code) {
-		}
-	})
-	.error(function (resp) {
-		console.log(resp);
-	});
+	// var data1 = {
+	// 	columnid:teacherId
+	// };
+	// Http.post('/unl/playurl.json',data1)
+	// .success(function (resp) {
+	// 	console.log(resp);
+	// 	if (1 === resp.code) {
+	// 		$scope.videoInfo=resp.data;
+	// 	}
+	// 	else if (0 === resp.code) {
+	// 	}
+	// })
+	// .error(function (resp) {
+	// 	console.log(resp);
+	// });
 	// 对视频添加信任
 	$scope.videoUrl = function(url){  
         return $sce.trustAsResourceUrl(url);  
@@ -2294,17 +2892,24 @@ educationApp.controller('subscribdetailsCtrl', ['$scope','Http', 'Popup', '$root
 			resp.data.avatar=picBasePath + resp.data.avatar;
 			resp.data.imgurl=picBasePath + resp.data.imgurl;
 			$scope.subDetailList =resp.data;
+			$scope.subDetailList.info=$scope.subDetailList.info.split("\n");
+			$scope.describe=$scope.subDetailList.describe.split("\n");
 			$scope.columnList =resp.data.columnlist;
 			for (var i = 0; i < $scope.columnList.length; i++) {
 				$scope.columnList[i].isplay = false;
 				$scope.columnList[i].indexnum = i;
 			}
 			var priceType=parseInt(resp.data.price);
-			if(priceType>=0 || $scope.columnList.price == '免费'){
+			if($scope.subDetailList.price == '免费'){
 				$scope.priceType = true;
-			}
-			if($scope.columnList.price == '免费'){
 				$scope.showPrice = false;
+			}else if(priceType>=0){
+				$scope.priceType = true;
+			}else if($scope.subDetailList.price == '已订阅'){
+				$scope.priceType = false;
+			}else{
+				$scope.priceType = true;
+				$scope.priceType = false;
 			}
 		}
 		else if (0 === resp.code) {
@@ -2436,8 +3041,33 @@ educationApp.controller('subscribdetailsCtrl', ['$scope','Http', 'Popup', '$root
 						console.log(resp);
 					});
 				}
-				$state.go("subscribpay", {teacherid:tid},{reload:true});
-				$ionicViewSwitcher.nextDirection("forward");
+				if($scope.subDetailList.price == '免费'){
+					var data = {
+						teacherid:teacherId
+					};
+					Http.post('/teacher/follow.json',data)
+					.success(function (resp) {
+						console.log(resp);
+						if (1 === resp.code) {
+							// $scope.priceType = false;
+							$state.go('subscribed',{reload:true});
+							$ionicViewSwitcher.nextDirection("forward");
+							Popup.alert('订阅成功！');
+						}
+						else if (0 === resp.code) {
+							Popup.alert(resp.reason);
+						}
+						else if (-1 === resp.code) {
+							$state.go('login');
+						}
+					})
+					.error(function (resp) {
+						console.log(resp);
+					});
+				}else{
+					$state.go("subscribpay", {teacherid:tid},{reload:true});
+					$ionicViewSwitcher.nextDirection("forward");
+				}
 
 			}
 		})
@@ -2508,15 +3138,23 @@ educationApp.controller('subscribdetailsCtrl', ['$scope','Http', 'Popup', '$root
 				$scope.videoInfo={};
 				// 获取视频地址，自动播放（第一次播放此视频执行）
 				var data1 = {
-					videoid:index.id
+					columnid:index.id
 				};
 				// console.log(data1);
 				Http.post('/unl/playurl.json',data1)
 				.success(function (resp) {
+					console.log(resp);
 					if (1 === resp.code) {
 						$scope.videoInfo=resp.data;
 						$scope.playVideoId=index.id;
 						$scope.indexNum=index.indexnum;
+						$scope.subDetailList.playurl=$scope.videoInfo.playurl;
+						if($scope.videoInfo.type == 'short'){
+							var yvideo = document.getElementById('playVideo') || null;
+							yvideo.addEventListener('ended',function(){
+								$('.y-endplay').css({'display':'block'});
+							});
+						}
 						for (var i = 0; i < $scope.columnList.length; i++) {
 							$scope.columnList[i].isplay = false;
 						}
@@ -2535,6 +3173,32 @@ educationApp.controller('subscribdetailsCtrl', ['$scope','Http', 'Popup', '$root
 			
 		}
 		
+	};
+	$ionicModal.fromTemplateUrl('templates/modal.html', {
+	  scope: $scope
+	}).then(function(modal) {
+	  $scope.modal = modal;
+	});
+	// 头像放大
+	$scope.enlarge=function(url){
+		$scope.modal.show();
+		$scope.enlargeImg=url;
+	};
+	// 头像放大
+	$scope.hideModal=function(){
+		$scope.modal.hide();
+	};
+	// 重新试看
+	$scope.playAgin=function(){
+		var yvideo = document.getElementById('playVideo') || null;
+		$('.y-endplay').css({'display':'none'});
+		yvideo.play();
+	};
+	// 立即订阅
+	$scope.goSub=function(){
+		sessionStorage.setItem('tabNum',1);
+		$state.go("tab.micro-lesson",{reload:true});
+        $ionicViewSwitcher.nextDirection("forward");
 	};
 }]);
 educationApp.controller('subscribpayCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher) {
@@ -2584,6 +3248,40 @@ educationApp.controller('subscribpayCtrl', ['$scope','Http', 'Popup', '$rootScop
 	// 	console.log(resp);
 	// });
 	
+	$scope.paySubscrib = function (orderID) {
+		var data = {
+			type: 'wx',
+			orderid: orderID
+		};
+		Http.post('/pay/prepay.json', data)
+		.success(function (resp) {
+			if (1 === resp.code) {
+				var data = resp.data;
+				// 预支付成功
+				var params = {
+				    partnerid: data.partnerid, // merchant id
+				    prepayid: data.prepayid, // prepay id
+				    noncestr: data.noncestr, // nonce
+				    timestamp: data.timestamp, // timestamp
+				    sign: data.sign, // signed string
+				};
+				Wechat.sendPaymentRequest(params, function () {
+				    var confirm = Popup.alert("支付成功！");
+				    confirm.then(function () {
+				    	// 支付成功后返回订阅列表
+				    	$state.go('tab.subscribed');
+				    	$ionicViewSwitcher.nextDirection("forward");
+				    });
+
+				}, function (reason) {
+				    Popup.alert("Failed: " + reason);
+				});
+			}
+		})
+		.error(function (){
+			Popup.alert('数据请求失败，请稍后再试');
+		});
+	};
 	
 	// 返回上一页
 	$scope.ionicBack= function () {

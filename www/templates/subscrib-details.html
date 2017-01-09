@@ -1,12 +1,18 @@
+
+<span class="y-back status-bar-offset" ng-click="ionicBack()"><img src="./img/boutique/goback.png" alt=""></span>
 <ion-view hide-nav-bar="false" view-title="悦美课" class="y-view">
     <ion-content class="y-simple-video y-office-content">
     	<!-- 视频模块 -->
 		<div class="y-video">
-	        <video ng-src="{{videoUrl(videoInfo.playurl)}}" controls loop poster="./img/boutique/poster.png" id="playVideo"></video>
-	        <span class="y-back" ng-click="ionicBack()"><img src="./img/boutique/goback.png" alt=""></span>
-	        <span class="y-share" ng-click="goShare(subDetailList)"><img src="./img/boutique/share.png" alt=""></span>
-	        <span class="y-collection" ng-if="!subDetailList.iskeep" ng-click="keepDesigner(subDetailList)"><img src="./img/boutique/collection.png" alt=""></span>
-	        <span class="y-collection" ng-if="subDetailList.iskeep" ng-click="keepDesigner(subDetailList)"><img src="./img/boutique/k-collection.png" alt=""></span>
+	        <video ng-src="{{videoUrl(subDetailList.playurl)}}" controls poster="./img/boutique/poster.png" id="playVideo"></video>
+	        <span class="y-share status-bar-offset" ng-click="goShare(subDetailList)"><img src="./img/boutique/share.png" alt=""></span>
+	        <span class="y-collection status-bar-offset" ng-if="!subDetailList.iskeep" ng-click="keepDesigner(subDetailList)"><img src="./img/boutique/collection.png" alt=""></span>
+	        <span class="y-collection status-bar-offset" ng-if="subDetailList.iskeep" ng-click="keepDesigner(subDetailList)"><img src="./img/boutique/k-collection.png" alt=""></span>
+	        <div class="y-endplay">
+	        	<div class="endplay-text">试看结束，订阅会员可免费观看</div>
+	        	<div class="endplay-agin" ng-click="playAgin()">重新试看</div>
+	        	<div class="endplay-gopay" ng-click="goSub()">立即订阅</div>
+	        </div>
 	    </div>
 	    
 	    <!-- 订阅详情 -->
@@ -20,13 +26,13 @@
 	            <span class="y-sub-title">专栏简介</span>
 	            <span class="y-sub-number"><span ng-bind="subDetailList.keepnum"></span>人已订阅</span>
 	            <span class="y-designer-info">
-	                <img ng-src="{{subDetailList.imgurl}}" alt="">
+	                <img ng-src="{{subDetailList.imgurl}}" alt="" ng-click="enlarge(subDetailList.imgurl)">
 	                <span ng-bind="subDetailList.name"></span>
 	                <span class="y-job-type" ng-bind="subDetailList.job"></span>
 	            </span>
 	        </div>
 	        <div class="y-describe">
-	            <span ng-bind="subDetailList.describe"></span>
+	            <p ng-repeat="item in describe track by $index"><span ng-bind="item"></span></p>
 	        </div>
 	        <span class="y-notice">订阅须知</span>
 	        <div class="y-describe y-notice-info">
@@ -61,6 +67,11 @@
     <!-- 订阅按钮模块 -->
     <div class="y-pay-info" ng-if="priceType">
         <div class="y-pay-btn" ng-if="showPrice" ng-click="subscribPay(subDetailList.id)"><span>订阅：￥</span><span ng-bind="subDetailList.price"></span><span>/年</span></div>
-        <div class="y-pay-btn" ng-if="!showPrice">订阅：<span ng-bind="subDetailList.price"></span></div>
+        <div class="y-pay-btn" ng-if="!showPrice" ng-click="subscribPay(subDetailList.id)">订阅：<span ng-bind="subDetailList.price"></span></div>
     </div>
+    <script id="templates/modal.html" type="text/ng-template">
+      <ion-modal-view class="y-modalView flex align" ng-click="hideModal()">
+          <img ng-src="{{enlargeImg}}" alt="" class="enlargeImg flex align">
+      </ion-modal-view>
+    </script>
 </ion-view>

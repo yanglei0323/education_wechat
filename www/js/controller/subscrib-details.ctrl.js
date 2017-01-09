@@ -1,26 +1,28 @@
-educationApp.controller('subscribdetailsCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$ionicActionSheet','$sce','$timeout', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$ionicActionSheet,$sce,$timeout) {
+educationApp.controller('subscribdetailsCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$ionicActionSheet','$sce','$timeout','$ionicModal', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$ionicActionSheet,$sce,$timeout,$ionicModal) {
 	console.log('专栏订阅详情');
 	var teacherId=$stateParams.teacherid;
 	$scope.subDetailList = {};
+	$scope.describe={};
 	$scope.showPrice = true;
 	$('.y-bPage').css({'display':'none'});
     $('.y-page-1').css({'display':'block'});
+    $('.y-endplay').css({'display':'none'});
 	// 视频功能
-	var data1 = {
-		columnid:teacherId
-	};
-	Http.post('/unl/playurl.json',data1)
-	.success(function (resp) {
-		console.log(resp);
-		if (1 === resp.code) {
-			$scope.videoInfo=resp.data;
-		}
-		else if (0 === resp.code) {
-		}
-	})
-	.error(function (resp) {
-		console.log(resp);
-	});
+	// var data1 = {
+	// 	columnid:teacherId
+	// };
+	// Http.post('/unl/playurl.json',data1)
+	// .success(function (resp) {
+	// 	console.log(resp);
+	// 	if (1 === resp.code) {
+	// 		$scope.videoInfo=resp.data;
+	// 	}
+	// 	else if (0 === resp.code) {
+	// 	}
+	// })
+	// .error(function (resp) {
+	// 	console.log(resp);
+	// });
 	// 对视频添加信任
 	$scope.videoUrl = function(url){  
         return $sce.trustAsResourceUrl(url);  
@@ -36,17 +38,24 @@ educationApp.controller('subscribdetailsCtrl', ['$scope','Http', 'Popup', '$root
 			resp.data.avatar=picBasePath + resp.data.avatar;
 			resp.data.imgurl=picBasePath + resp.data.imgurl;
 			$scope.subDetailList =resp.data;
+			$scope.subDetailList.info=$scope.subDetailList.info.split("\n");
+			$scope.describe=$scope.subDetailList.describe.split("\n");
 			$scope.columnList =resp.data.columnlist;
 			for (var i = 0; i < $scope.columnList.length; i++) {
 				$scope.columnList[i].isplay = false;
 				$scope.columnList[i].indexnum = i;
 			}
 			var priceType=parseInt(resp.data.price);
-			if(priceType>=0 || $scope.columnList.price == '免费'){
+			if($scope.subDetailList.price == '免费'){
 				$scope.priceType = true;
-			}
-			if($scope.columnList.price == '免费'){
 				$scope.showPrice = false;
+			}else if(priceType>=0){
+				$scope.priceType = true;
+			}else if($scope.subDetailList.price == '已订阅'){
+				$scope.priceType = false;
+			}else{
+				$scope.priceType = true;
+				$scope.priceType = false;
 			}
 		}
 		else if (0 === resp.code) {
@@ -178,8 +187,33 @@ educationApp.controller('subscribdetailsCtrl', ['$scope','Http', 'Popup', '$root
 						console.log(resp);
 					});
 				}
-				$state.go("subscribpay", {teacherid:tid},{reload:true});
-				$ionicViewSwitcher.nextDirection("forward");
+				if($scope.subDetailList.price == '免费'){
+					var data = {
+						teacherid:teacherId
+					};
+					Http.post('/teacher/follow.json',data)
+					.success(function (resp) {
+						console.log(resp);
+						if (1 === resp.code) {
+							// $scope.priceType = false;
+							$state.go('subscribed',{reload:true});
+							$ionicViewSwitcher.nextDirection("forward");
+							Popup.alert('订阅成功！');
+						}
+						else if (0 === resp.code) {
+							Popup.alert(resp.reason);
+						}
+						else if (-1 === resp.code) {
+							$state.go('login');
+						}
+					})
+					.error(function (resp) {
+						console.log(resp);
+					});
+				}else{
+					$state.go("subscribpay", {teacherid:tid},{reload:true});
+					$ionicViewSwitcher.nextDirection("forward");
+				}
 
 			}
 		})
@@ -250,15 +284,23 @@ educationApp.controller('subscribdetailsCtrl', ['$scope','Http', 'Popup', '$root
 				$scope.videoInfo={};
 				// 获取视频地址，自动播放（第一次播放此视频执行）
 				var data1 = {
-					videoid:index.id
+					columnid:index.id
 				};
 				// console.log(data1);
 				Http.post('/unl/playurl.json',data1)
 				.success(function (resp) {
+					console.log(resp);
 					if (1 === resp.code) {
 						$scope.videoInfo=resp.data;
 						$scope.playVideoId=index.id;
 						$scope.indexNum=index.indexnum;
+						$scope.subDetailList.playurl=$scope.videoInfo.playurl;
+						if($scope.videoInfo.type == 'short'){
+							var yvideo = document.getElementById('playVideo') || null;
+							yvideo.addEventListener('ended',function(){
+								$('.y-endplay').css({'display':'block'});
+							});
+						}
 						for (var i = 0; i < $scope.columnList.length; i++) {
 							$scope.columnList[i].isplay = false;
 						}
@@ -277,5 +319,31 @@ educationApp.controller('subscribdetailsCtrl', ['$scope','Http', 'Popup', '$root
 			
 		}
 		
+	};
+	$ionicModal.fromTemplateUrl('templates/modal.html', {
+	  scope: $scope
+	}).then(function(modal) {
+	  $scope.modal = modal;
+	});
+	// 头像放大
+	$scope.enlarge=function(url){
+		$scope.modal.show();
+		$scope.enlargeImg=url;
+	};
+	// 头像放大
+	$scope.hideModal=function(){
+		$scope.modal.hide();
+	};
+	// 重新试看
+	$scope.playAgin=function(){
+		var yvideo = document.getElementById('playVideo') || null;
+		$('.y-endplay').css({'display':'none'});
+		yvideo.play();
+	};
+	// 立即订阅
+	$scope.goSub=function(){
+		sessionStorage.setItem('tabNum',1);
+		$state.go("tab.micro-lesson",{reload:true});
+        $ionicViewSwitcher.nextDirection("forward");
 	};
 }]);

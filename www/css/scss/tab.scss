@@ -39,7 +39,7 @@ $tabSize: 25px;
 }
 
 ion-tabs.tabs-color-active-positive {
-	.tab-item.tab-item-active {
+	.tab-item.tab-item-active, .tab-item.tab-item-active:link, .tab-item.tab-item-active:visited, .tab-item.tab-item-active:hover, .tab-item.tab-item-active:active {
 		color: $orange !important;
 		text-decoration: none;
 	}

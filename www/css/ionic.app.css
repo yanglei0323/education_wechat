@@ -50,7 +50,7 @@ $dark:                            #444 !default;
   background: url(../img/me_active.png) no-repeat center;
   background-size:0.6667rem auto; }
 
-ion-tabs.tabs-color-active-positive .tab-item.tab-item-active {
+ion-tabs.tabs-color-active-positive .tab-item.tab-item-active, ion-tabs.tabs-color-active-positive .tab-item.tab-item-active:link, ion-tabs.tabs-color-active-positive .tab-item.tab-item-active:visited, ion-tabs.tabs-color-active-positive .tab-item.tab-item-active:hover, ion-tabs.tabs-color-active-positive .tab-item.tab-item-active:active {
   color: #f5a523 !important;
   text-decoration: none; }
 
@@ -95,11 +95,18 @@ ion-tabs.tabs-color-active-positive .tab-item.tab-item-active {
 
 .login-bg {
   background: url(../img/login/bg.png) no-repeat;
-  background-size: 100% 100%; }
+  background-size: 100% auto; }
 
 .login-logo-div {
   width: 100%;
-  height:7.0667rem; }
+  height:7.0667rem;
+  padding-top:2.6667rem; }
+
+.login-logo-div img {
+  display: block;
+  width:2.1333rem;
+  height:2.1333rem;
+  margin: 0 auto; }
 
 .login-input-div {
   width: 100%;
@@ -107,6 +114,16 @@ ion-tabs.tabs-color-active-positive .tab-item.tab-item-active {
 
 .pull-right {
   float: right; }
+
+.button-login-back {
+  position: absolute;
+  top:0.4000rem;
+  left:0.4000rem;
+  width:0.8000rem;
+  height:0.8000rem; }
+
+.button-login-back img {
+  height:0.8000rem; }
 
 .button-login {
   display: block;
@@ -218,7 +235,7 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
   background: url(../img/icon_wx.png) no-repeat;
   background-size:0.8000rem;
   float: left;
-  margin-left:1.3333rem; }
+  margin-left:2.1333rem; }
 
 .icon-weibo {
   background: url(../img/icon_weibo.png) no-repeat;
@@ -228,7 +245,24 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
   background: url(../img/icon_qq.png) no-repeat;
   background-size:0.8000rem;
   float: right;
-  margin-right:1.3333rem; }
+  margin-right:2.1333rem; }
+
+/* ---------导航页，引导页--------- */
+.startup-bg {
+  background: url(../img/start-up-bg.png) no-repeat;
+  background-size: 100% 100%; }
+
+.guide1 img {
+  width: 100%;
+  height: 100%; }
+
+.guide2 img {
+  width: 100%;
+  height: 100%; }
+
+.guide3 img {
+  width: 100%;
+  height: 100%; }
 
 /* ---------binding-phone--------- */
 .binding-phone-bg {
@@ -305,6 +339,9 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
 
 ::-webkit-scrollbar {
   display: none !important; }
+
+.scroll-content {
+  padding-top: 0 !important; }
 
 .swiper-container-horizontal > .swiper-pagination-bullets .swiper-pagination-bullet {
   margin: 0 5px; }
@@ -456,10 +493,12 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
 
 .y-nomorepage {
   text-align: center;
-  margin-top: -40px; }
+  margin-top:0.2667rem;
+  color: #b2b2b2; }
 
 .y-nomorepage-1 {
-  text-align: center; }
+  text-align: center;
+  color: #b2b2b2; }
 
 .y-boutique-content {
   width: 100%;
@@ -528,6 +567,15 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
 .y-simple-video {
   background: #ececec; }
 
+.y-back {
+  position: absolute;
+  left:0.4000rem;
+  top:0.2667rem;
+  z-index: 111; }
+  .y-back img {
+    width:0.5867rem;
+    height:0.5867rem; }
+
 .y-video {
   width: 100%;
   height:5.6000rem;
@@ -540,11 +588,6 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
   .y-video video {
     width: 100%;
     height: 100%; }
-  .y-video .y-back {
-    position: absolute;
-    left:0.4000rem;
-    top:0.2667rem;
-    z-index: 111; }
   .y-video .y-back img, .y-video .y-share img, .y-video .y-collection img {
     width:0.5867rem;
     height:0.5867rem; }
@@ -558,6 +601,43 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
     right:0.2667rem;
     top:0.2667rem;
     z-index: 111; }
+  .y-video .y-endplay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: rgba(0, 0, 0, 0.66);
+    z-index: 1111;
+    font-size:0.3733rem; }
+    .y-video .y-endplay .endplay-text {
+      width: 100%;
+      min-height:0.0267rem;
+      text-align: center;
+      color: #fff;
+      margin-top:1.9200rem; }
+    .y-video .y-endplay .endplay-agin {
+      width:2.3467rem;
+      height:0.8000rem;
+      background: #fff;
+      color: #999;
+      text-align: center;
+      line-height:0.8000rem;
+      position: absolute;
+      left:1.9733rem;
+      bottom:1.1200rem;
+      border-radius:0.0800rem; }
+    .y-video .y-endplay .endplay-gopay {
+      width:2.3467rem;
+      height:0.8000rem;
+      background: #fff;
+      color: #f5a523;
+      text-align: center;
+      line-height:0.8000rem;
+      position: absolute;
+      right:1.9733rem;
+      bottom:1.1200rem;
+      border-radius:0.0800rem; }
 
 .y-switch {
   width: 100%;
@@ -615,6 +695,8 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
   font-size:0.3200rem;
   text-indent: 2em;
   padding:0.1867rem 5px; }
+  .y-describe p {
+    margin: 0; }
 
 ::-webkit-scrollbar {
   display: none; }
@@ -626,7 +708,7 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
   line-height:0.8267rem; }
 
 .y-notice-info {
-  text-indent: 0em; }
+  text-indent: 2em; }
   .y-notice-info p {
     margin: 0 !important; }
 
@@ -649,6 +731,10 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
     margin:0.1333rem 20px 5px 0;
     float: right;
     border:0.0267rem solid #f5a523; }
+  .y-pay-info .status {
+    background: #ececec;
+    border:0.0267rem solid #ececec;
+    color: #f5a523; }
   .y-pay-info .y-pay-number {
     width:6.0000rem;
     color: #333;
@@ -668,15 +754,12 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
   .y-office-info .y-office-icon {
     width:2.0000rem;
     height:3.6000rem;
-    flex-direction: column;
-    justify-content: space-around; }
-    .y-office-info .y-office-icon .y-icon-item img {
-      width:0.6133rem;
-      height:0.6133rem;
-      vertical-align: center; }
-    .y-office-info .y-office-icon .y-icon-item .y-place-icon {
-      width:0.4000rem;
-      height:0.6133rem; }
+    flex-direction: column; }
+    .y-office-info .y-office-icon .y-icon-item {
+      height:1.1733rem; }
+      .y-office-info .y-office-icon .y-icon-item img {
+        width:0.5333rem;
+        height:0.5333rem; }
   .y-office-info .y-office-detail {
     width:8.0000rem;
     height:3.6000rem;
@@ -710,6 +793,16 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
   width: 100%;
   height:1.6000rem;
   background: transparent; }
+
+.y-modalView {
+  background: #000 !important;
+  top: 0 !important;
+  height: 100vh; }
+  .y-modalView .enlargeImg {
+    width: 100%;
+    height: auto;
+    vertical-align: middle;
+    justify-content: center; }
 
 .y-switch .y-item {
   width: 49.5%;
@@ -1095,10 +1188,9 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
         .y-page .y-personInfo .learn-info .y-active-info img {
           width:0.4000rem;
           height:0.4000rem;
-          vertical-align: middle;
-          margin-right:0.1333rem; }
+          vertical-align: middle; }
         .y-page .y-personInfo .learn-info .y-active-info .y-mr {
-          margin-right:0.5333rem; }
+          margin-right:0.2667rem; }
       .y-page .y-personInfo .learn-info .y-active-price {
         font-size:0.3200rem;
         color: #999;
@@ -1262,7 +1354,10 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
       padding-left:2.8533rem;
       font-size:0.3733rem;
       color: #333;
-      line-height:2.8267rem; }
+      line-height:2.8267rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap; }
   .y-collection-content .y-nocontent {
     width:1.8667rem;
     height:1.8667rem;
@@ -1308,7 +1403,8 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
 .y-special-input input {
   font-size:0.3200rem !important;
   color: #333;
-  background-color: #fff !important; }
+  background-color: #fff !important;
+  padding-top: 0 !important; }
 
 .action-sheet-title {
   color: #999;

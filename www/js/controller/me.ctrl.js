@@ -1,5 +1,5 @@
 educationApp.controller('meCtrl',
-    ['$scope', '$state', '$location', 'User','Http','Popup','$ionicViewSwitcher','$timeout', function ($scope, $state, $location, User,Http,Popup,$ionicViewSwitcher,$timeout) {
+    ['$scope', '$state', '$location', 'User','Http','Popup','$ionicViewSwitcher','$timeout','$ionicScrollDelegate', function ($scope, $state, $location, User,Http,Popup,$ionicViewSwitcher,$timeout,$ionicScrollDelegate) {
     console.log('我的控制器');
     $scope.isLogin = false;
     // 未登录提示语
@@ -8,9 +8,12 @@ educationApp.controller('meCtrl',
     $scope.nocontent=true;
     $scope.nobuy=true;
     $scope.nosign=true;
-    $scope.noMorePage=false;
-    $scope.noMorePage1=false;
-    $scope.noMorePage2=false;
+    $scope.noMorePage=true;
+    $scope.noMorePage1=true;
+    $scope.noMorePage2=true;
+    $scope.scrollNum1=true;
+    $scope.scrollNum2=false;
+    $scope.scrollNum3=false;
     
     // 登录跳转
     $scope.goLogin = function(){
@@ -69,6 +72,22 @@ educationApp.controller('meCtrl',
         $('.y-page').css({'display':'none'});
         $('.y-page-'+index).css({'display':'block'});
         sessionStorage.setItem('meTab',index);
+        if(index == 1){
+            $scope.scrollNum1=true;
+            $scope.scrollNum2=false;
+            $scope.scrollNum3=false;
+        }else if(index == 2){
+            $scope.scrollNum1=false;
+            $scope.scrollNum2=true;
+            $scope.scrollNum3=false;
+        }else if(index == 3){
+            $scope.scrollNum1=false;
+            $scope.scrollNum2=false;
+            $scope.scrollNum3=true;
+        }
+        $timeout(function(){
+            $ionicScrollDelegate.resize();
+        },1000);
     };
     // 判断登录状态
     Http.post('/user/mine.json')
@@ -76,9 +95,6 @@ educationApp.controller('meCtrl',
         if (-1 === data.code) {
             console.log('用户未登录');
             // $state.go('login');
-            $scope.noMorePage=true;
-            $scope.noMorePage1=true;
-            $scope.noMorePage2=true;
         } else if (1 === data.code) {
             $scope.isLogin = true;
             if($scope.isLogin) {
@@ -95,12 +111,24 @@ educationApp.controller('meCtrl',
                 // 判断显示状态
                 var meTab=JSON.parse(sessionStorage.getItem('meTab'));
                 if(meTab == null){
-                    return;
                 }else{
                     $('.y-meTab-item').removeClass("meTab-item-h");
                     $('.y-meTab-item-'+meTab).addClass("meTab-item-h");
                     $('.y-page').css({'display':'none'});
                     $('.y-page-'+meTab).css({'display':'block'});
+                    if(meTab == 1){
+                        $scope.scrollNum1=true;
+                        $scope.scrollNum2=false;
+                        $scope.scrollNum3=false;
+                    }else if(meTab == 2){
+                        $scope.scrollNum1=false;
+                        $scope.scrollNum2=true;
+                        $scope.scrollNum3=false;
+                    }else if(meTab == 3){
+                        $scope.scrollNum1=false;
+                        $scope.scrollNum2=false;
+                        $scope.scrollNum3=true;
+                    }
                 }
                 // 获取学习记录
                 $scope.studyList=[];
@@ -114,7 +142,10 @@ educationApp.controller('meCtrl',
                     $state.go("boutiquedetail",{videoid:data.id},{reload:true});
                     $ionicViewSwitcher.nextDirection("forward");
                 };
-                
+                $scope.goSubDetail=function(index){
+                    $state.go("subscribdetails",{teacherid:index.teacherid},{reload:true});
+                    $ionicViewSwitcher.nextDirection("forward");
+                };
                 Http.post('/user/studyhistory.json',data)
                 .success(function (resp) {
                     console.log(resp);
@@ -135,6 +166,7 @@ educationApp.controller('meCtrl',
                             $scope.noMorePage=true;
                         }else{
                             $scope.nocontent=false;
+                            $scope.noMorePage=false;
                         }
                     }
                     else if (-1 === resp.code) {
@@ -149,39 +181,44 @@ educationApp.controller('meCtrl',
                 $scope.noMorePageText=false;
                 $scope.loading=false;
                 $scope.loadMore=function(){
-                    if(!$scope.loading){
-                        $scope.loading=true;
-                        $timeout(function(){
-                            Http.post('/user/studyhistory.json',{page:page})
-                            .success(function (resp) {
-                                console.log(resp);
-                                if (1 === resp.code) {
-                                    var studyhistoryList = resp.data.studyhistorylist;
-                                    for (var i = 0; i < studyhistoryList.length; i++) {
-                                        if(studyhistoryList[i].type == 0){//专栏学习记录
-                                            studyhistoryList[i].scolumn.imgurl = picBasePath + studyhistoryList[i].scolumn.imgurl;
-                                            $scope.studyList.push(studyhistoryList[i]);
-                                        }else{//视频学习记录
-                                            studyhistoryList[i].video.imgurl = picBasePath + studyhistoryList[i].video.imgurl;
-                                            $scope.studyVideoList.push(studyhistoryList[i]);
+                    if($scope.scrollNum1){
+                        if(!$scope.loading){
+                            $scope.loading=true;
+                            $timeout(function(){
+                                Http.post('/user/studyhistory.json',{page:page})
+                                .success(function (resp) {
+                                    console.log(resp);
+                                    if (1 === resp.code) {
+                                        var studyhistoryList = resp.data.studyhistorylist;
+                                        for (var i = 0; i < studyhistoryList.length; i++) {
+                                            if(studyhistoryList[i].type == 0){//专栏学习记录
+                                                studyhistoryList[i].scolumn.imgurl = picBasePath + studyhistoryList[i].scolumn.imgurl;
+                                                $scope.studyList.push(studyhistoryList[i]);
+                                            }else{//视频学习记录
+                                                studyhistoryList[i].video.imgurl = picBasePath + studyhistoryList[i].video.imgurl;
+                                                $scope.studyVideoList.push(studyhistoryList[i]);
+                                            }
                                         }
+                                        page+=1;
+                                        $scope.$broadcast('scroll.infiniteScrollComplete');
+                                        $scope.loading=false;
+                                        if (studyhistoryList.length === 0) {
+                                            $scope.noMorePage=true;//禁止滚动触发事件
+                                            $scope.noMorePageText=true;
+                                        } 
                                     }
-                                    page+=1;
-                                    $scope.$broadcast('scroll.infiniteScrollComplete');
-                                    $scope.loading=false;
-                                    if (studyhistoryList.length === 0) {
-                                        $scope.noMorePage=true;//禁止滚动触发事件
-                                        $scope.noMorePageText=true;
-                                    } 
-                                }
-                                else if (0 === resp.code) {
-                                }
-                            })
-                            .error(function (resp) {
-                                console.log(resp);
-                            });
-                        },1000);
+                                    else if (0 === resp.code) {
+                                    }
+                                })
+                                .error(function (resp) {
+                                    console.log(resp);
+                                });
+                            },1000);
+                        }
+                    }else{
+                        $scope.$broadcast('scroll.infiniteScrollComplete');
                     }
+                    
                 };
                 // 获取购买记录
                 $scope.buyList=[];
@@ -204,6 +241,7 @@ educationApp.controller('meCtrl',
                             $scope.noMorePage1=true;
                         }else{
                             $scope.nobuy=false;
+                            $scope.noMorePage1=false;
                         }
                     }
                     else if (-1 === resp.code) {
@@ -217,35 +255,40 @@ educationApp.controller('meCtrl',
                 $scope.noMorePageText1=false;
                 $scope.loading1=false;
                 $scope.loadMore1=function(){
-                    if(!$scope.loading1){
-                        $scope.loading1=true;
-                        $timeout(function(){
-                            Http.post('/video/myvideolist.json',{page:page1})
-                            .success(function (resp) {
-                                console.log(resp);
-                                if (1 === resp.code) {
-                                    var videoList = resp.data.videolist;
-                                    for (var i = 0; i < videoList.length; i++) {
-                                        videoList[i].imgurl = picBasePath + videoList[i].imgurl;
-                                        $scope.buyList.push(videoList[i]);
+                    if($scope.scrollNum2){
+                        if(!$scope.loading1){
+                            $scope.loading1=true;
+                            $timeout(function(){
+                                Http.post('/video/myvideolist.json',{page:page1})
+                                .success(function (resp) {
+                                    console.log(resp);
+                                    if (1 === resp.code) {
+                                        var videoList = resp.data.videolist;
+                                        for (var i = 0; i < videoList.length; i++) {
+                                            videoList[i].imgurl = picBasePath + videoList[i].imgurl;
+                                            $scope.buyList.push(videoList[i]);
+                                        }
+                                        page1+=1;
+                                        $scope.$broadcast('scroll.infiniteScrollComplete');
+                                        $scope.loading1=false;
+                                        if (videoList.length === 0) {
+                                            $scope.noMorePage1=true;//禁止滚动触发事件
+                                            $scope.noMorePageText1=true;
+                                        } 
                                     }
-                                    page1+=1;
-                                    $scope.$broadcast('scroll.infiniteScrollComplete');
-                                    $scope.loading1=false;
-                                    if (videoList.length === 0) {
-                                        $scope.noMorePage1=true;//禁止滚动触发事件
-                                        $scope.noMorePageText1=true;
-                                    } 
-                                }
-                                else if (0 === resp.code) {
-                                }
-                            })
-                            .error(function (resp) {
-                                console.log(resp);
-                            });
-                        },1000);
-                        
+                                    else if (0 === resp.code) {
+                                    }
+                                })
+                                .error(function (resp) {
+                                    console.log(resp);
+                                });
+                            },1000);
+                            
+                        }
+                    }else{
+                        $scope.$broadcast('scroll.infiniteScrollComplete');
                     }
+                    
                 };
                 // 获取报名记录
                 $scope.signList=[];
@@ -268,6 +311,7 @@ educationApp.controller('meCtrl',
                             $scope.noMorePage2=true;
                         }else{
                             $scope.nosign=false;
+                            $scope.noMorePage2=false;
                         }
                     }
                     else if (-1 === resp.code) {
@@ -281,35 +325,40 @@ educationApp.controller('meCtrl',
                 $scope.noMorePageText2=false;
                 $scope.loading2=false;
                 $scope.loadMore2=function(){
-                    if(!$scope.loading2){
-                        $scope.loading2=true;
-                        $timeout(function(){
-                            Http.post('/activity/myactivitylist.json',{page:page2})
-                            .success(function (resp) {
-                                console.log(resp);
-                                if (1 === resp.code) {
-                                    var activityList = resp.data.activitylist;
-                                    for (var i = 0; i < activityList.length; i++) {
-                                        activityList[i].imgurl = picBasePath + activityList[i].imgurl;
-                                        $scope.signList.push(activityList[i]);
+                    if($scope.scrollNum3){
+                        if(!$scope.loading2){
+                            $scope.loading2=true;
+                            $timeout(function(){
+                                Http.post('/activity/myactivitylist.json',{page:page2})
+                                .success(function (resp) {
+                                    console.log(resp);
+                                    if (1 === resp.code) {
+                                        var activityList = resp.data.activitylist;
+                                        for (var i = 0; i < activityList.length; i++) {
+                                            activityList[i].imgurl = picBasePath + activityList[i].imgurl;
+                                            $scope.signList.push(activityList[i]);
+                                        }
+                                        page2+=1;
+                                        $scope.$broadcast('scroll.infiniteScrollComplete');
+                                        $scope.loading2=false;
+                                        if (activityList.length === 0) {
+                                            $scope.noMorePage2=true;//禁止滚动触发事件
+                                            $scope.noMorePageText2=true;
+                                        } 
                                     }
-                                    page2+=1;
-                                    $scope.$broadcast('scroll.infiniteScrollComplete');
-                                    $scope.loading2=false;
-                                    if (activityList.length === 0) {
-                                        $scope.noMorePage2=true;//禁止滚动触发事件
-                                        $scope.noMorePageText2=true;
-                                    } 
-                                }
-                                else if (0 === resp.code) {
-                                }
-                            })
-                            .error(function (resp) {
-                                console.log(resp);
-                            });
-                        },1000);
-                        
+                                    else if (0 === resp.code) {
+                                    }
+                                })
+                                .error(function (resp) {
+                                    console.log(resp);
+                                });
+                            },1000);
+                            
+                        }
+                    }else{
+                        $scope.$broadcast('scroll.infiniteScrollComplete');
                     }
+                    
                 };
             }
         }

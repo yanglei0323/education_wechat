@@ -1,5 +1,6 @@
 educationApp.controller('loginCtrl',
-	['$scope','$rootScope', 'Http', 'Popup', 'User', '$http', '$state', '$ionicLoading', '$window', function ($scope, $rootScope, Http, Popup, User, $http, $state, $ionicLoading, $window) {
+	['$scope', '$rootScope', 'Http', 'Popup', 'User', '$http', '$state', '$ionicLoading', '$window', '$ionicHistory', '$ionicViewSwitcher',
+	function ($scope, $rootScope, Http, Popup, User, $http, $state, $ionicLoading, $window, $ionicHistory, $ionicViewSwitcher) {
 
 	$scope.user = {};
 
@@ -57,12 +58,12 @@ educationApp.controller('loginCtrl',
 		    				// 登录成功(用户已绑定手机号)
 		    				localStorage.setItem('isLogin', true);
 							localStorage.setItem('user', JSON.stringify(resp.data));
-		    				var confirm = Popup.alert('登录成功');
-							confirm.then(function () {
+		    				// var confirm = Popup.alert('登录成功');
+							// confirm.then(function () {
 								// $ionicHistory.goBack();
 								// $window.history.back();
 								$rootScope.$ionicGoBack();
-							});
+							// });
 		    			}
 		    			else if (2 === resp.code) {
 		    				// 微信授权成功，用户未绑定手机号，则跳转到手机号绑定页
@@ -140,4 +141,9 @@ educationApp.controller('loginCtrl',
 		        Popup.alert(failReason);
 			}, checkClientIsInstalled);
 		};
+
+	$scope.ionicBack= function () {
+	    $ionicHistory.goBack();
+	    $ionicViewSwitcher.nextDirection("back");
+	};
 }]);

@@ -7,7 +7,7 @@ educationApp.controller('mapCtrl',
    
     // 百度地图API功能
     var map = new BMap.Map("allmap");
-    map.centerAndZoom(new BMap.Point(116.404,39.915),11);
+    map.centerAndZoom(new BMap.Point(116.404,39.915),15);
     map.enableScrollWheelZoom(true);
     // 用经纬度设置地图中心点
     map.clearOverlays(); 

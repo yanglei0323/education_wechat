@@ -40,6 +40,41 @@ educationApp.controller('payactivityCtrl', ['$scope','Http', 'Popup', '$rootScop
 	.error(function (resp) {
 		console.log(resp);
 	});
+
+	$scope.payActivity = function (orderID) {
+		var data = {
+			type: 'wx',
+			orderid: orderID
+		};
+		Http.post('/pay/prepay.json', data)
+		.success(function (resp) {
+			if (1 === resp.code) {
+				var data = resp.data;
+				// 预支付成功
+				var params = {
+				    partnerid: data.partnerid, // merchant id
+				    prepayid: data.prepayid, // prepay id
+				    noncestr: data.noncestr, // nonce
+				    timestamp: data.timestamp, // timestamp
+				    sign: data.sign, // signed string
+				};
+				Wechat.sendPaymentRequest(params, function () {
+				    var confirm = Popup.alert("支付成功！");
+				    confirm.then(function () {
+				    	// 这里支付成功后的逻辑是什么
+				    	$state.go("activitydetail",{useractivityid:$scope.subDetailList.id},{reload:true});
+                   		$ionicViewSwitcher.nextDirection("forward");
+				    });
+
+				}, function (reason) {
+				    Popup.alert("Failed: " + reason);
+				});
+			}
+		})
+		.error(function (){
+			Popup.alert('数据请求失败，请稍后再试');
+		});
+	}
 	
 	// 返回上一页
 	$scope.ionicBack= function () {

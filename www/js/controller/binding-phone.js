@@ -39,11 +39,7 @@ educationApp.controller('bindingPhoneCtrl', ['$scope', '$rootScope', '$state', '
 				// 跳转到 登录后的我
 				localStorage.setItem('isLogin', true);
 				localStorage.setItem('user', JSON.stringify(resp.data));
-				var confirm = Popup.alert('登录成功');
-				confirm.then(function () {
-					// $ionicHistory.goBack();
-					$rootScope.$ionicGoBack();
-				});
+				$state.go('tab.me');
 			} else if ( 0 === resp.code ) {
 				Popup.alert(resp.reason);
 			} else {

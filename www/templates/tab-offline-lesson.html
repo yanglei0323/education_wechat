@@ -1,8 +1,9 @@
-<ion-view hide-nav-bar="false" view-title="悦美课">
+<ion-view hide-nav-bar="false" view-title="悦美课" class="y-view">
 	<ion-header-bar class="bar-stable bar bar-header" align-title="center">
 	    <div class="title title-center header-item">线下课</div>
 	</ion-header-bar>
     <ion-content class="y-simple-video">
+  <ion-refresher pulling-text="" on-refresh="doRefresh()"></ion-refresher>
     	<div class="y-boutique-content y-office-content">
 			<div class="y-recommend">
 				<div class="item" ng-repeat="recomitem in lineList"  ng-click="goOfficeDetails(recomitem)">
@@ -10,7 +11,7 @@
 					<span class="y-office-icon"><img src="./img/micro/line-icon.png" alt=""> <span class="y-office-status" ng-bind="recomitem.status"></span></span>
 
 					<div class="recom-title flex align s-between">
-						<div class="left flex align"><span ng-bind="recomitem.title"></span></div>
+						<div class="left flex align"><span ng-bind="recomitem.name"></span></div>
 					</div>
 					<span class="flex align watchnum"><span ng-bind="recomitem.timelongs"></span><span ng-bind="recomitem.worktime"></span>-<span ng-bind="recomitem.peoplenum"></span>人已报名</span>
 				</div>

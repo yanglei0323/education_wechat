@@ -8,7 +8,7 @@ educationApp.controller('offlineLessonCtrl', ['$scope','Http', 'Popup', '$rootSc
 	};
 	Http.post('/page/unl/activitylist.json',data)
 	.success(function (resp) {
-		// console.log(resp);
+		console.log(resp);
 		if (1 === resp.code) {
 			var activityList = resp.data.activitylist;
 			for (var i = 0; i < activityList.length; i++) {
@@ -59,4 +59,30 @@ educationApp.controller('offlineLessonCtrl', ['$scope','Http', 'Popup', '$rootSc
 		    },1000);
 		}
 	};
+	// 下拉刷新
+	$scope.doRefresh = function() {
+		var page=1;
+		var data = {
+			page:page
+		};
+		Http.post('/page/unl/activitylist.json',data)
+		.success(function (resp) {
+			console.log(resp);
+			if (1 === resp.code) {
+				var activityList = resp.data.activitylist;
+				for (var i = 0; i < activityList.length; i++) {
+					activityList[i].imgurl = picBasePath + activityList[i].imgurl;
+				}
+				$scope.lineList = {};
+				$scope.lineList = activityList;
+				page++;
+				$scope.noMorePage=false;
+			}
+			else if (0 === resp.code) {
+			}
+		})
+		.finally(function() {
+            $scope.$broadcast('scroll.refreshComplete');
+        });
+    };
 }]);

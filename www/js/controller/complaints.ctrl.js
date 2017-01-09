@@ -8,8 +8,8 @@ educationApp.controller('complaintsCtrl', ['$scope','Http', 'Popup', '$rootScope
 	};
 	// 提交吐槽信息
     $scope.goComplaints = function () {
-        if ($('.complaintsText').val() == '' || $('.complaintsText').val().length<=9) {
-            Popup.alert('请至少填写10个字以上吐槽信息！');
+        if ($('.complaintsText').val() == '' || $('.complaintsText').val().length<=0) {
+            Popup.alert('请填写吐槽信息！');
             return;
         }else{
         	var data = {
@@ -21,6 +21,8 @@ educationApp.controller('complaintsCtrl', ['$scope','Http', 'Popup', '$rootScope
 				console.log(resp);
 				if (1 === resp.code) {
 					Popup.alert('感谢吐槽，我们一直在努力......');
+					$ionicHistory.goBack();
+	    			$ionicViewSwitcher.nextDirection("back");
 				}
 				else if (0 === resp.code) {
 				}

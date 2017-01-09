@@ -121,6 +121,8 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
             localStorage.removeItem('user');
             localStorage.setItem('user', JSON.stringify(resp.data));
             Popup.alert('保存个人信息成功！');
+            $state.go("tab.me",{reload:true});
+            $ionicViewSwitcher.nextDirection("forward");
           }
           else if (0 === resp.code) {
           }
@@ -194,7 +196,7 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
         $cordovaCamera.getPicture(options)
             .then(function (imageURI) {
                 //Success
-                $scope.userInfo.avatar = imageURI;
+                $scope.userInfo.avatar = imageURI.split('?')[0];
                 $scope.uploadPhoto();
             }, function (err) {
                 // Error
@@ -208,7 +210,7 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
         var server = encodeURI('http://101.200.205.162:8889/user/edit.json' + requestParams);
         var fileURL = $scope.userInfo.avatar;
         var options = {
-            fileKey: "file",//相当于form表单项的name属性
+            fileKey: "avatar",//相当于form表单项的name属性
             fileName: fileURL.substr(fileURL.lastIndexOf('/') + 1),
             mimeType: "image/jpeg"
         };
@@ -221,6 +223,18 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
         .then(function (result) {
             // Success!
             Popup.alert('上传成功');
+            Http.post('/user/mine.json')
+            .success(function (resp) {
+                if (-1 === resp.code) {
+                    // $state.go('login');
+                } else if (1 === resp.code) {
+                    localStorage.removeItem('user');
+                    localStorage.setItem('user', JSON.stringify(resp.data));
+                }
+            })
+            .error(function (resp) {
+                console.log('数据请求失败，请稍后再试！');
+            });
         }, function (err) {
             // Error
             Popup.alert("上传失败: Code = " + error.code);

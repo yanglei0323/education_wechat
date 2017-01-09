@@ -1,4 +1,4 @@
-<ion-view view-title="悦美课">
+<ion-view view-title="悦美课" class="y-view">
 
   <ion-content class="y-simple-video">
       <!-- <button type="button" ng-click="logout()">退出登录</button>
@@ -21,7 +21,7 @@
             </span>
         </div>
         <div class="y-vertical"></div>
-        <div class="y-setUp"><img src="./img/me/setUp.png" alt="" ng-click="goSetUp()"></div>
+        <div class="y-setUp status-bar-offset"><img src="./img/me/setUp.png" alt="" ng-click="goSetUp()"></div>
       </div>
       <div class="user-info" ng-if="!isLogin">
         <img ng-src="img/head-none.png" class="head-img" ng-click="goPerCenter()">
@@ -34,7 +34,7 @@
           <span class="y-meTab-item y-meTab-item-3 flex align" ng-click="goTab(3)">报名记录</span>
       </div>
       <div class="y-page y-page-1">
-        <div class="y-personInfo" ng-repeat="studyInfo in studyList" ng-click="goBoutiDetail(studyInfo)">
+        <div class="y-personInfo" ng-repeat="studyInfo in studyList" ng-click="goSubDetail(studyInfo.scolumn)">
           <img ng-src="{{studyInfo.scolumn.imgurl}}" alt="" class="learnImg">
           <div class="learnImg-info" ng-bind="studyInfo.alreadytimes"></div>
           <div class="learn-info">
@@ -42,7 +42,7 @@
             <span class="learn-detail">剩余：<span ng-bind="studyInfo.scolumn.timelongs"></span><span class="y-ml-15">第<span ng-bind="studyInfo.scolumn.number"></span>集/共<span ng-bind="studyInfo.scolumn.totalnum"></span>集</span></span>
           </div>
         </div>
-        <div class="y-personInfo" ng-repeat="studyInfo in studyVideoList" ng-click="goBoutiDetail(studyInfo)">
+        <div class="y-personInfo" ng-repeat="studyInfo in studyVideoList" ng-click="goBoutiDetail(studyInfo.video)">
           <img ng-src="{{studyInfo.video.imgurl}}" alt="" class="learnImg">
           <div class="learnImg-info" ng-bind="studyInfo.alreadytimes"></div>
           <div class="learn-info">

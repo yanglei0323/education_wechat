@@ -1,4 +1,4 @@
-<ion-view>
+<ion-view class="y-view">
 <ion-header-bar class="bar-light bar bar-header" align-title="center">
 	<button ng-click="ionicBack()" class="button back-button buttons button-clear header-item">
 	    <i class="icon ion-ios-arrow-left"></i>
@@ -6,6 +6,7 @@
     <div class="title title-center header-item"><span ng-bind="topicName"></span></div>
 </ion-header-bar>
 <ion-content class="y-simple-video">
+  <ion-refresher pulling-text="" on-refresh="doRefresh()"></ion-refresher>
 	<div class="y-boutique-content y-office-content">
 		<div class="y-recommend">
 			<div class="item" ng-repeat="area in areaList" ng-click="goAreaDetail(area)">

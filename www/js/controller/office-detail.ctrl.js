@@ -1,24 +1,31 @@
-educationApp.controller('officedetailCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$ionicActionSheet', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$ionicActionSheet) {
+educationApp.controller('officedetailCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$ionicActionSheet','$ionicModal', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$ionicActionSheet,$ionicModal) {
 	console.log('线下课详情');
 	var activityId=$stateParams.activityid;
 	$scope.boutiDetailList = {};
 	$scope.priceType = false;
 	$scope.showPrice = true;
+	$scope.status = true;
 	var data = {
 		activityid:activityId
 	};
 	Http.post('/page/unl/activitydetail.json',data)
 	.success(function (resp) {
-		// console.log(resp);
+		console.log(resp);
 		if (1 === resp.code) {
 			resp.data.teacheravatar=picBasePath + resp.data.teacheravatar;
+			resp.data.imgurl=picBasePath + resp.data.imgurl;
 			$scope.boutiDetailList =resp.data;
+			$scope.boutiDetailList.teacherdescribe=$scope.boutiDetailList.teacherdescribe.split("\n");
+			$scope.boutiDetailList.detail=$scope.boutiDetailList.detail.split("\n");
 			var priceType=parseInt(resp.data.price);
 			if(priceType>=0 || $scope.boutiDetailList.price == '免费'){
 				$scope.priceType = true;
 			}
 			if($scope.boutiDetailList.price == '免费'){
 				$scope.showPrice = false;
+			}
+			if($scope.boutiDetailList.status == '已过期'){
+				$scope.status = false;
 			}
 		}
 		else if (0 === resp.code) {
@@ -140,5 +147,18 @@ educationApp.controller('officedetailCtrl', ['$scope','Http', 'Popup', '$rootSco
 			console.log('数据请求失败，请稍后再试！');
 		});
 	};
-	
+	$ionicModal.fromTemplateUrl('templates/modal.html', {
+	  scope: $scope
+	}).then(function(modal) {
+	  $scope.modal = modal;
+	});
+	// 头像放大
+	$scope.enlarge=function(url){
+		$scope.modal.show();
+		$scope.enlargeImg=url;
+	};
+	// 头像放大
+	$scope.hideModal=function(){
+		$scope.modal.hide();
+	};
 }]);

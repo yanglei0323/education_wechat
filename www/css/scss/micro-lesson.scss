@@ -2,6 +2,9 @@ $graybg: #ececec;
 ::-webkit-scrollbar{
 	display:none !important;
 }
+.scroll-content {
+    padding-top:0 !important;
+}
 .swiper-container-horizontal>.swiper-pagination-bullets .swiper-pagination-bullet {
   margin: 0 5px;
 }
@@ -173,8 +176,10 @@ $graybg: #ececec;
 }
 .y-nomorepage{
 	text-align:center;
-	margin-top:-40px;
+	margin-top:10px;
+	color:#b2b2b2;
 }
 .y-nomorepage-1{
 	text-align:center;
+	color:#b2b2b2;
 }

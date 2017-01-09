@@ -1,9 +1,12 @@
-educationApp.controller('boutiquedetailCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$ionicActionSheet','$sce', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$ionicActionSheet,$sce) {
+educationApp.controller('boutiquedetailCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$ionicActionSheet','$sce','$ionicModal', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$ionicActionSheet,$sce,$ionicModal) {
 	console.log('付费精品视频详情');
 	var videoId=$stateParams.videoid;
 	$scope.boutiDetailList = {};
 	$scope.priceType = false;
 	$scope.showPrice = true;
+	$scope.endedDiv = false;
+	$('.y-endplay').css({'display':'none'});
+
 	// 视频功能
 	var data1 = {
 		videoid:videoId
@@ -11,9 +14,16 @@ educationApp.controller('boutiquedetailCtrl', ['$scope','Http', 'Popup', '$rootS
 	// console.log(data1);
 	Http.post('/unl/playurl.json',data1)
 	.success(function (resp) {
-		// console.log(resp);
+		console.log(resp);
 		if (1 === resp.code) {
 			$scope.videoInfo=resp.data;
+			// 视频监听
+			if($scope.videoInfo.type == 'short'){
+				var yvideo = document.getElementById('playVideo') || null;
+				yvideo.addEventListener('ended',function(){
+					$('.y-endplay').css({'display':'block'});
+				});
+			}
 		}
 		else if (0 === resp.code) {
 		}
@@ -36,12 +46,14 @@ educationApp.controller('boutiquedetailCtrl', ['$scope','Http', 'Popup', '$rootS
 			resp.data.teacheravatar=picBasePath + resp.data.teacheravatar;
 			resp.data.imgurl=picBasePath + resp.data.imgurl;
 			$scope.boutiDetailList =resp.data;
+			$scope.boutiDetailList.teacherdescribe=$scope.boutiDetailList.teacherdescribe.split("\n");
 			var priceType=parseInt(resp.data.price);
-			if(priceType>=0 || $scope.boutiDetailList.price == '免费'){
+			if(priceType>=0 ){
 				$scope.priceType = true;
 			}
 			if($scope.boutiDetailList.price == '免费'){
-				$scope.showPrice = false;
+				// $scope.showPrice = false;
+				$scope.priceType = false;
 			}
 		}
 		else if (0 === resp.code) {
@@ -198,5 +210,32 @@ educationApp.controller('boutiquedetailCtrl', ['$scope','Http', 'Popup', '$rootS
 		.error(function (data) {
 			console.log('数据请求失败，请稍后再试！');
 		});
+	};
+	$ionicModal.fromTemplateUrl('templates/modal.html', {
+	  scope: $scope
+	}).then(function(modal) {
+	  $scope.modal = modal;
+	});
+	// 头像放大
+	$scope.enlarge=function(url){
+		$scope.modal.show();
+		$scope.enlargeImg=url;
+	};
+	// 头像放大
+	$scope.hideModal=function(){
+		$scope.modal.hide();
+	};
+	
+	// 重新试看
+	$scope.playAgin=function(){
+		var yvideo = document.getElementById('playVideo') || null;
+		$('.y-endplay').css({'display':'none'});
+		yvideo.play();
+	};
+	// 立即订阅
+	$scope.goSub=function(){
+		sessionStorage.setItem('tabNum',1);
+		$state.go("tab.micro-lesson",{reload:true});
+        $ionicViewSwitcher.nextDirection("forward");
 	};
 }]);

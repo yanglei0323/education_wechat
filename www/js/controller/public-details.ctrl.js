@@ -1,4 +1,4 @@
-educationApp.controller('publicdetailsCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$ionicActionSheet','$sce', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$ionicActionSheet,$sce) {
+educationApp.controller('publicdetailsCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$ionicActionSheet','$sce','$ionicModal', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$ionicActionSheet,$sce,$ionicModal) {
 	console.log('公开课视频详情');
 	var videoId=$stateParams.videoid;
 	$scope.boutiDetailList = {};
@@ -8,7 +8,7 @@ educationApp.controller('publicdetailsCtrl', ['$scope','Http', 'Popup', '$rootSc
 	};
 	Http.post('/unl/playurl.json',data1)
 	.success(function (resp) {
-		// console.log(resp);
+		console.log(resp);
 		if (1 === resp.code) {
 			$scope.videoInfo=resp.data;
 		}
@@ -19,7 +19,7 @@ educationApp.controller('publicdetailsCtrl', ['$scope','Http', 'Popup', '$rootSc
 		console.log(resp);
 	});
 	// 对视频添加信任
-	$scope.videoUrl = function(url){  
+	$scope.videoUrl = function(url){ 
         return $sce.trustAsResourceUrl(url);  
     };
     // 获取视频信息
@@ -28,11 +28,12 @@ educationApp.controller('publicdetailsCtrl', ['$scope','Http', 'Popup', '$rootSc
 	};
 	Http.post('/page/unl/videodetail.json',data)
 	.success(function (resp) {
-		console.log(resp);
+		// console.log(resp);
 		if (1 === resp.code) {
 			resp.data.teacheravatar=picBasePath + resp.data.teacheravatar;
 			resp.data.imgurl=picBasePath + resp.data.imgurl;
 			$scope.boutiDetailList =resp.data;
+			$scope.boutiDetailList.teacherdescribe=$scope.boutiDetailList.teacherdescribe.split("\n");
 		}
 		else if (0 === resp.code) {
 		}
@@ -150,5 +151,19 @@ educationApp.controller('publicdetailsCtrl', ['$scope','Http', 'Popup', '$rootSc
 		}
 	    $ionicHistory.goBack();
 	    $ionicViewSwitcher.nextDirection("back");
+	};
+	$ionicModal.fromTemplateUrl('templates/modal.html', {
+	  scope: $scope
+	}).then(function(modal) {
+	  $scope.modal = modal;
+	});
+	// 头像放大
+	$scope.enlarge=function(url){
+		$scope.modal.show();
+		$scope.enlargeImg=url;
+	};
+	// 头像放大
+	$scope.hideModal=function(){
+		$scope.modal.hide();
 	};
 }]);

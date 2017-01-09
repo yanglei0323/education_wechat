@@ -1,5 +1,5 @@
 <!-- 顶部导航 -->
-<div class="home-bar flex align s-around">
+<div class="home-bar flex align s-around status-bar-offset">
   <span class="home-tab-item home-tab-item-1 flex align home-tab-active" ng-click="homeSwitch(1)">精选</span>
   <span class="home-tab-item home-tab-item-2 flex align" ng-click="homeSwitch(2)">付费精品</span>
   <span class="home-tab-item home-tab-item-3 flex align" ng-click="homeSwitch(3)">公开课</span>
@@ -7,8 +7,8 @@
 
 </div>
 <ion-view view-title="悦美课">
-		
-  <ion-content class="y-home-content y-home-content-1">
+  <ion-content class="y-home-content y-home-content-1 status-bar-offset">
+  
   	<!-- 轮播图 -->
   	<!-- <div class="home-banner">
   		<ion-slide-box auto-play="true" slide-interval="3000" does-continue="true" delegate-handle="slideimgs"  
@@ -20,7 +20,7 @@
   	</div> -->
   	<div class="swiper-container" id="indexbanner"> 
 	    <div class="swiper-wrapper">  
-	        <div class="swiper-slide" ng-repeat="banner in bannerList"><img ng-src="{{banner.imgurl}}" /></div> 
+	        <div class="swiper-slide" ng-repeat="banner in bannerList" ng-click="bannerJump(banner)"><img ng-src="{{banner.imgurl}}" /></div> 
 	    </div>  
 	    <div class="swiper-pagination"></div><!--分页器-->
 	</div>
@@ -50,7 +50,7 @@
 	<!-- 热门推荐 -->
 	<div class="y-home-title special-title">热门推荐</div>
 	<div class="y-recommend">
-		<div class="item" ng-repeat="recomitem in recomList" ng-click="goBoutiDetail(recomitem)">
+		<div class="item" ng-repeat="recomitem in recomList" ng-click="goBoutiDetail(recomitem.video)">
 			<img ng-src="{{recomitem.imgurl}}" alt="">
 			<div class="recom-title flex align s-between">
 				<div class="left flex align"><span ng-bind="recomitem.video.teachername"></span>:<span ng-bind="recomitem.video.name"></span></div>
@@ -62,7 +62,8 @@
 	</div>
   </ion-content>
   <!-- 付费精品 -->
-  <ion-content class="y-home-content y-home-content-2 y-simple-video">
+  <ion-content class="y-home-content y-home-content-2 y-simple-video status-bar-offset">
+  <ion-refresher pulling-text="" on-refresh="doRefresh()" immediate-check="false"></ion-refresher>
 	<div class="y-boutique-content">
 		<div class="y-recommend">
 			<div class="item" ng-repeat="recomitem in boutiqueList" ng-click="goBoutiDetail(recomitem)">
@@ -75,12 +76,12 @@
 			</div>
 		</div>
 	</div>
-	
-	<ion-infinite-scroll ng-if="!noMorePage" immediate-check="false" on-infinite="loadMore()" distance="1%" ></ion-infinite-scroll>
+	<ion-infinite-scroll ng-show="!noMorePage" immediate-check="false" on-infinite="loadMore()" distance="1%"></ion-infinite-scroll>
 	<div ng-if="noMorePage" class="y-nomorepage">没有更多内容</div>
   </ion-content>
   <!-- 公开课 -->
-  <ion-content class="y-home-content y-home-content-3 y-simple-video">
+  <ion-content class="y-home-content y-home-content-3 y-simple-video status-bar-offset">
+  <ion-refresher pulling-text="" on-refresh="doRefresh1()" immediate-check="false"></ion-refresher>
 	<div class="y-boutique-content">
 		<div class="y-recommend">
 			<div class="item" ng-repeat="recomitem in publicList" ng-click="gopublicDetail(recomitem)">
@@ -92,11 +93,12 @@
 			</div>
 		</div>
 	</div>
-	<ion-infinite-scroll ng-if="!noMorePage1" immediate-check="false" on-infinite="loadMore1()" distance="1%" ></ion-infinite-scroll>
+	<ion-infinite-scroll ng-show="!noMorePage1" immediate-check="false" on-infinite="loadMore1()" distance="1%" ></ion-infinite-scroll>
 	<div ng-if="noMorePage1" class="y-nomorepage">没有更多内容</div>
   </ion-content>
   <!-- 课程表 -->
-  <ion-content class="y-home-content y-home-content-4 y-simple-video">
+  <ion-content class="y-home-content y-home-content-4 y-simple-video status-bar-offset">
+  <ion-refresher pulling-text="" on-refresh="doRefresh2()" immediate-check="false"></ion-refresher>
 	<div class="y-curriculum-content">
 		<div class="y-curriculum-item" ng-repeat="curritem in curriculumList">
 			<img ng-src="{{curritem.imgurl}}" alt="" class="y-currImg">
