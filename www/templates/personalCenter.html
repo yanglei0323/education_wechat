@@ -1,67 +1,45 @@
-<span class="y-back status-bar-offset" ng-click="ionicBack()"><img src="./img/boutique/goback.png" alt=""></span>
-<ion-view hide-nav-bar="false" view-title="悦美课" class="y-view">
-    <ion-content class="y-simple-video y-office-content">
-      <!-- 视频模块 -->
-    <div class="y-video">
-          <img ng-src="{{boutiDetailList.imgurl}}" alt="" class="y-office-img">
-          <span class="y-collection status-bar-offset" ng-if="!boutiDetailList.iskeep" ng-click="keepDesigner(boutiDetailList)"><img src="./img/boutique/collection.png" alt=""></span>
-          <span class="y-collection status-bar-offset" ng-if="boutiDetailList.iskeep" ng-click="keepDesigner(boutiDetailList)"><img src="./img/boutique/k-collection.png" alt=""></span>
-      </div>
-      
-      <!-- 订阅详情 -->
-      <div class="y-page-1">
-          <!-- 切换tab -->
-          <div class="y-switch">
-              <span ng-bind="boutiDetailList.name" class="y-class-title"></span>
-          </div>
-          <div class="y-office-info">
-            <div class="y-office-icon flex align">
-              <div class="y-icon-item flex align"><img src="./img/boutique/time-icon.png" alt=""></div>
-              <div class="y-icon-item flex align"><img src="./img/boutique/place-icon.png" alt=""></div>
-              <div class="y-icon-item flex align"><img src="./img/boutique/balance-icon.png" alt=""></div>
-            </div>
-            <div class="y-office-detail">
-              <div class="y-detail-item">
-                <span ng-bind="boutiDetailList.worktime"></span>
-              </div>
-              <div class="y-detail-item" ng-click="goMap(boutiDetailList.positionx,boutiDetailList.positiony)">
-                <span ng-bind="boutiDetailList.position"></span>
-                <img src="./img/boutique/right-icon.png" alt="">
-              </div>
-              <div class="y-detail-item y-detail-special">
-                <span ng-if="showPrice">￥<span ng-bind="boutiDetailList.price"></span></span>
-                <span ng-if="!showPrice"><span ng-bind="boutiDetailList.price"></span></span>
-              </div>
-            </div>
-          </div>
-         <div class="y-subInfo">
-              <span class="y-sub-title">导师简介</span>
-              <span class="y-sub-number" ng-if="!priceType"><span ng-bind="boutiDetailList.peoplenum"></span>人已报名</span>
-              <span class="y-designer-info">
-                  <img ng-src="{{boutiDetailList.teacheravatar}}" alt="" ng-click="enlarge(boutiDetailList.teacheravatar)">
-                  <span ng-bind="boutiDetailList.teachername"></span>
-                  <span class="y-job-type" ng-bind="boutiDetailList.teacherjob"></span>
-              </span>
-          </div>
-          <div class="y-describe">
-              <p ng-repeat="item in boutiDetailList.teacherdescribe track by $index"><span ng-bind="item"></span></p>
-          </div>
-          <span class="y-notice">课程介绍</span>
-          <div class="y-describe y-notice-info">
-              <p><span ng-bind="boutiDetailList.detail"></span></p>
-          </div> 
-      </div>
-  <div class="marginB54"></div>
-    </ion-content>
-    <!-- 订阅按钮模块 -->
-    <div class="y-pay-info" ng-if="priceType">
-        <span class="y-pay-number"><span ng-bind="boutiDetailList.peoplenum"></span>人已报名<span class="y-pay-price" ng-if="showPrice">￥<span ng-bind="boutiDetailList.price"></span></span><span class="y-pay-price" ng-if="!showPrice"><span ng-bind="boutiDetailList.price"></span></span></span>
-        <input type="submit" class="y-pay-btn" value="立即报名" ng-click="goRegistration(boutiDetailList)" ng-if="status">
-        <input type="submit" class="y-pay-btn status" value="已过期" ng-if="!status">
+<ion-view class="y-view">
+<ion-header-bar class="bar-light bar bar-header" align-title="center">
+    <button ng-click="ionicBack()" class="button back-button buttons button-clear header-item">
+        <i class="icon ion-ios-arrow-left"></i>
+    </button>
+    <div class="title title-center header-item"><span>个人中心</span></div>
+</ion-header-bar>
+<ion-content class="y-simple-video">
+  <!-- 头像 -->
+    <div class="y-percenter-headImg flex align">
+      <img ng-src="{{userInfo.avatar}}" alt="" class="flex align" ng-click="addPhoto();">
     </div>
-    <script id="templates/modal.html" type="text/ng-template">
-      <ion-modal-view class="y-modalView flex align" ng-click="hideModal()">
-          <img ng-src="{{enlargeImg}}" alt="" class="enlargeImg flex align">
-      </ion-modal-view>
-    </script>
+    <div class="content y-mt y-special-input">
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">昵称：</span>
+          <input type="text" ng-model="nickname" maxlength="20" class="nickname-input">
+        </label>
+        <label class="item item-input" ng-click="showSex()">
+          <span class="input-label">性别：</span>
+          <input type="text" ng-model="sexname" readOnly="true" class="sexflag-input">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">星座：</span>
+          <input type="text" ng-model="starname" readOnly="true" class="starflag-input" id="y-dateSelect">
+        </label>
+      </div>
+    </div>
+
+    <div class="content y-mt y-special-input">
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">公司：</span>
+          <input type="text" ng-model="company" maxlength="20" class="company-input">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">职业：</span>
+          <input type="text" ng-model="job" maxlength="20" class="job-input">
+        </label>
+      </div>
+    </div>
+
+    <div class="y-save-info" ng-click="goSaveInfo()">保存</div>
+</ion-content>
 </ion-view>

@@ -272,7 +272,7 @@ var educationApp = angular.module('education', ['ionic','ngCordova'])
     cache: false
   })
   .state('activitydetail', {
-    url: '/activitydetail:useractivityid',
+    url: '/activitydetail:useractivityid/:activityorderid',
     templateUrl: 'templates/activitydetail.html',
     controller: 'activitydetailCtrl',
     cache: false

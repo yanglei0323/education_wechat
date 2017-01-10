@@ -6,7 +6,7 @@
 	position:absolute;
 	left:15px;
 	top:10px;
-	z-index:111;
+	z-index:111111111;
 	img{
 		width:22px;
 		height:22px;
@@ -35,14 +35,14 @@
 		position:absolute;
 		right:42px;
 		top:10px;
-		z-index:111;
+		z-index:111111111;
 	}
 
 	.y-collection{
 		position:absolute;
 		right:10px;
 		top:10px;
-		z-index:111;
+		z-index:111111111;
 	}
 	.y-endplay{
 		width:100%;
@@ -168,6 +168,7 @@
 }
 .y-notice-info{
 	text-indent:2em;
+	min-height:10px;
 	p{
 		margin:0 !important;
 	}
