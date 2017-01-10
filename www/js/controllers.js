@@ -6,6 +6,66 @@ educationApp.controller('aboutusCtrl', ['$scope','Http', 'Popup', '$rootScope','
 	    $ionicViewSwitcher.nextDirection("back");
 	};
 }]);
+educationApp.controller('activitydetailCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher) {
+	console.log('报名详情详情控制器');
+	var useractivityId=$stateParams.useractivityid;
+	var activityorderId=$stateParams.activityorderid;
+	$scope.activityDetailsInfo = {};
+	
+	// 获取验证码
+	console.log(activityorderId);
+	if(activityorderId == ''){
+		console.log('报名id');
+		var data = {
+			useractivityid:useractivityId
+		};
+		Http.post('/activity/myactivity.json',data)
+		.success(function (resp) {
+			console.log(resp);
+			if (1 === resp.code) {
+				resp.data.activity.imgurl=picBasePath + resp.data.activity.imgurl;
+				$scope.activityDetailsInfo=resp.data;
+			}
+			else if (0 === resp.code) {
+				Popup.alert(resp.reason);
+			}
+		})
+		.error(function (resp) {
+			console.log(resp);
+		});
+	}
+	if(useractivityId == ''){
+		console.log('订单id');
+		var data = {
+			activityorderid:activityorderId
+		};
+		Http.post('/activity/myactivity.json',data)
+		.success(function (resp) {
+			console.log(resp);
+			if (1 === resp.code) {
+				resp.data.activity.imgurl=picBasePath + resp.data.activity.imgurl;
+				$scope.activityDetailsInfo=resp.data;
+			}
+			else if (0 === resp.code) {
+				Popup.alert(resp.reason);
+			}
+		})
+		.error(function (resp) {
+			console.log(resp);
+		});
+	}
+	// 返回上一页
+	$scope.ionicBack= function () {
+	    $ionicHistory.goBack();
+	    $ionicViewSwitcher.nextDirection("back");
+	};
+	// 活动详情跳转
+	$scope.goOfficeDetails=function(index){
+		$state.go("officedetails",{activityid:index.activity.id},{reload:true});
+		$ionicViewSwitcher.nextDirection("forward");
+	};
+	
+}]);
 educationApp.controller('areaCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$timeout', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$timeout) {
 	console.log('技术专区控制器');
 	var topicId=$stateParams.topicid;
@@ -1951,6 +2011,90 @@ educationApp.controller('offlineLessonCtrl', ['$scope','Http', 'Popup', '$rootSc
         });
     };
 }]);
+educationApp.controller('payactivityCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher) {
+	console.log('活动支付');
+	var activityId =　$stateParams.activityid;
+	var mName =　$stateParams.name;
+	var mTelephone =　$stateParams.telephone;
+	var mCompany =　$stateParams.company;
+	var mJob =　$stateParams.job;
+	console.log("activityId " + activityId);
+	console.log("mName " + mName);
+	console.log("mTelephone " + mTelephone);
+	console.log("mCompany " + mCompany);
+	console.log("mJob " + mJob);
+
+
+	$scope.mName = mName;
+	$scope.mTelephone = mTelephone;
+
+	$scope.subDetailList = {};
+	var data = {
+		activityid: activityId,
+		name: mName,
+		telephone: mTelephone,
+		company: mCompany,
+		job: mJob
+	};
+	Http.post('/activity/add.json',data)
+	.success(function (resp) {
+		console.log(resp);
+		if (1 === resp.code) {
+			resp.data.imgurl = picBasePath + resp.data.imgurl;
+			$scope.subDetailList = resp.data;
+		}
+		else if (0 === resp.code) {
+			Popup.alert(resp.reason);
+		}
+		else if (-1 === resp.code) {
+			$state.go('login');
+		}
+	})
+	.error(function (resp) {
+		console.log(resp);
+	});
+
+	$scope.payActivity = function (orderID) {
+		var data = {
+			type: 'wx',
+			orderid: orderID
+		};
+		Http.post('/pay/prepay.json', data)
+		.success(function (resp) {
+			if (1 === resp.code) {
+				var data = resp.data;
+				// 预支付成功
+				var params = {
+				    partnerid: data.partnerid, // merchant id
+				    prepayid: data.prepayid, // prepay id
+				    noncestr: data.noncestr, // nonce
+				    timestamp: data.timestamp, // timestamp
+				    sign: data.sign, // signed string
+				};
+				Wechat.sendPaymentRequest(params, function () {
+				    var confirm = Popup.alert("支付成功！");
+				    confirm.then(function () {
+				    	// 这里支付成功后的逻辑是什么
+				    	$state.go("activitydetail",{activityorderid:$scope.subDetailList.id},{reload:true});
+                   		$ionicViewSwitcher.nextDirection("forward");
+				    });
+
+				}, function (reason) {
+				    Popup.alert("Failed: " + reason);
+				});
+			}
+		})
+		.error(function (){
+			Popup.alert('数据请求失败，请稍后再试');
+		});
+	}
+	
+	// 返回上一页
+	$scope.ionicBack= function () {
+	    $ionicHistory.goBack();
+	    $ionicViewSwitcher.nextDirection("back");
+	};
+}]);
 educationApp.controller('payvipCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher) {
 	console.log('VIP支付');
 	var vipId =　$stateParams.vipid;
@@ -2306,6 +2450,87 @@ educationApp.controller('publicCtrl', ['$scope','Http', 'Popup', '$rootScope', f
 		console.log(resp);
 	});
 }]);
+educationApp.controller('registrationCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher) {
+    console.log('填写参加人信息');
+    // 获取线下课信息
+    var activityId=$stateParams.activityid;
+    // console.log(activityId);
+    var phoneRe = /^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/;
+    var pwdRe = /^[0-9a-zA-Z_]{6,20}/;
+    var data = {
+        activityid:activityId
+    };
+    Http.post('/page/unl/activitydetail.json',data)
+    .success(function (resp) {
+        console.log(resp);
+        if (1 === resp.code) {
+            $scope.boutiDetailList =resp.data;
+        }
+        else if (0 === resp.code) {
+        }
+    })
+    .error(function (resp) {
+        console.log(resp);
+    });
+    // 返回上一页
+    $scope.ionicBack= function () {
+        $ionicHistory.goBack();
+        $ionicViewSwitcher.nextDirection("back");
+    };
+    function checkParams() {
+        if ($('.company').val() == '') {
+            Popup.alert('请填写有效公司名称！');
+            return -1;
+        }
+        if ($('.profession').val() == '') {
+            Popup.alert('请填写有效职业名称！');
+            return -1;
+        }
+        if ($('.username').val() == '') {
+            Popup.alert('请填写姓名！');
+            return -1;
+        }
+        if (!phoneRe.test($('.userphone').val())) {
+            Popup.alert('手机号无效！');
+            return -1;
+        }
+        return 1;
+    };
+    // 信息填写完毕，跳转到支付页面
+    $scope.goPayOffice = function (username, userphone, Company, Job) {
+         if (-1 === checkParams()) {
+             return;
+         }
+         // console.log('跳转支付');
+         if($scope.boutiDetailList.price == '免费'){
+            var data1 = {
+                activityid:activityId,
+                name:$('.username').val(),
+                telephone:$('.userphone').val(),
+                company :$('.company').val(),
+                job:$('.profession').val()
+            };
+            Http.post('/activity/add.json',data1)
+            .success(function (resp) {
+                console.log(resp);
+                if (1 === resp.code) {
+                   $state.go("activitydetail",{useractivityid:resp.data.id},{reload:true});
+                   $ionicViewSwitcher.nextDirection("forward");
+                }
+                else if (0 === resp.code) {
+                }
+            })
+            .error(function (resp) {
+                console.log(resp);
+            });
+         }else{
+            $state.go('payactivity'
+                ,{activityid:activityId, name:username, telephone:userphone, company:Company, job:Job}
+                ,{reload:true});
+            $ionicViewSwitcher.nextDirection("forward");
+         }
+     };
+}]);
 educationApp.controller('setUpCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','User','$ionicViewSwitcher', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,User,$ionicViewSwitcher) {
 	console.log('设置页面控制器');
 	$scope.logout = User.logout;
@@ -2657,32 +2882,36 @@ educationApp.controller('subscribpayCtrl', ['$scope','Http', 'Popup', '$rootScop
 	
 	$scope.paySubscrib = function (orderID) {
 		var data = {
-			type: 'wx',
+			type: 'wz',
 			orderid: orderID
 		};
 		Http.post('/pay/prepay.json', data)
 		.success(function (resp) {
 			if (1 === resp.code) {
+				console.log(resp);
 				var data = resp.data;
 				// 预支付成功
-				var params = {
-				    partnerid: data.partnerid, // merchant id
-				    prepayid: data.prepayid, // prepay id
-				    noncestr: data.noncestr, // nonce
-				    timestamp: data.timestamp, // timestamp
-				    sign: data.sign, // signed string
-				};
-				Wechat.sendPaymentRequest(params, function () {
-				    var confirm = Popup.alert("支付成功！");
-				    confirm.then(function () {
-				    	// 支付成功后返回订阅列表
-				    	$state.go('tab.subscribed');
-				    	$ionicViewSwitcher.nextDirection("forward");
-				    });
-
-				}, function (reason) {
-				    Popup.alert("Failed: " + reason);
-				});
+				if (WeixinJSBridge) {
+					WeixinJSBridge.invoke(
+				       'getBrandWCPayRequest', {
+				           "appId": data.appId,     //公众号名称，由商户传入     
+				           "timeStamp": data.timeStamp.toString(),         //时间戳，自1970年以来的秒数     
+				           "nonceStr": data.nonceStr, //随机串     
+				           "package": data.package,     
+				           "signType": data.signType,         //微信签名方式    
+				           "paySign": data.paySign //微信签名 
+				       },
+				       function(res){     
+				           if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+				               // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+				               Popup.alert('支付成功');
+				           }
+				           else {
+				               Popup.alert('支付失败' + res.err_msg);
+				           }
+				       }
+				   );
+				}
 			}
 		})
 		.error(function (){
