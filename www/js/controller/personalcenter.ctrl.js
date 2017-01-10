@@ -132,5 +132,95 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
         });
     };
 
+    // -----------------------------------------------------------------------
+    wx.config({
+      debug: false,
+      appId: 'wxef3e1498e754b61d',
+      timestamp: ,
+      nonceStr: '',
+      signature: '',
+      jsApiList: [
+        // 所有要调用的 API 都要加到这个列表中
+        'chooseImage',
+        'uploadImage',
+        'downloadImage'
+      ]
+    });
+    wx.ready(function () {
+        // 在这里调用 API
+        wx.checkJsApi({
+          jsApiList: [
+            'chooseImage',
+            'uploadImage',
+            'downloadImage'
+          ],
+          success: function (res) {
+            console.log(JSON.stringify(res));
+          }
+        });
+    });
+    // 点击头像
+    $scope.localId = [];
+    $scope.addPhoto= function () {
+        wx.chooseImage({
+          count: 1, // 默认9
+          sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+          sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+          success: function (res) {
+              $scope.localId = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+              if ($scope.localId.length == 0) {
+                  Popup.alert('请选择图片!');
+                  return false;
+              }
+              if($scope.localId.length > 1) {
+                  Popup.alert('修改头像不支持多张图片,请重新上传');
+                  $scope.localId = [];
+                  return false;
+              }
+   
+              $scope.userInfo.avatar=$scope.localId[0];
+              // 上传图片
+              function upload() {
+                wx.uploadImage({
+                    localId: $scope.localId[0],
+                    isShowProgressTips: 1, // 默认为1，显示进度提示
+                    success: function (res) {
+                        $scope.serverId=res.serverId;
+                        // 下载图片
+                        wx.downloadImage({
+                            serverId: $scope.serverId, // 需要下载的图片的服务器端ID，由uploadImage接口获得
+                            isShowProgressTips: 1, // 默认为1，显示进度提示
+                            success: function (res) {
+                                var localId = res.localId; // 返回图片下载后的本地ID
+                                // 上传到自己的服务器
+                                var dataAvatar = {
+                                  avatar:localId,
+                                };
+                                Http.post('/user/edit.json',dataAvatar)
+                                .success(function (resp) {
+                                  if (1 === resp.code) {
+                                    // 更新用户信息
+                                    localStorage.removeItem('user');
+                                    localStorage.setItem('user', JSON.stringify(resp.data));
+                                    Popup.alert('修改头像成功！');
+                                  }
+                                  else if (0 === resp.code) {
+                                  }
+                                })
+                                .error(function (resp) {
+                                  console.log(resp);
+                                });
+                            }
+                        });
+                    },
+                    fail: function (res) {
+                        Popup.alert('上传失败！');
+                    }
+                });
+              }
+              upload();
+          }
+      });
+    };
 
 }]);
