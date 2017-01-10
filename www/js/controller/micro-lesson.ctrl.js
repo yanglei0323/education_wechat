@@ -106,7 +106,7 @@ educationApp.controller('microLessonCtrl', ['$scope','Http', 'Popup', '$rootScop
 	$scope.recomList = {};
 	Http.post('/page/unl/choosehotvideo.json')
 	.success(function (resp) {
-		console.log(resp);
+		// console.log(resp);
 		if (1 === resp.code) {
 			var hotvideoList = resp.data.hotvideolist;
 			for (var i = 0; i < hotvideoList.length; i++) {

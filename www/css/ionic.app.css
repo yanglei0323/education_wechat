@@ -396,11 +396,16 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
   height:4.1333rem;
   background: #ececec;
   overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap; }
   .y-subscription .subItem {
     position: relative;
     border-radius:0.1333rem;
-    display: inline-block; }
+    width:3.2000rem;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; }
   .y-subscription img {
     width:3.2000rem;
     height:4.0000rem;
@@ -437,7 +442,7 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
     .y-special .row .col img {
       width:4.8000rem;
       height:2.6667rem;
-      border-radius:0.0533rem; }
+      border-radius:0.0800rem; }
 
 .y-special .y-row-bottom {
   margin-top:0.0800rem; }

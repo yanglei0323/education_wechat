@@ -108,7 +108,7 @@ var educationApp = angular.module('education', ['ionic','ngCordova'])
   $ionicConfigProvider.platform.android.tabs.position('bottom');
   $ionicConfigProvider.tabs.style('standard');
   // 全局禁用cache
-  $ionicConfigProvider.views.maxCache(0);
+  // $ionicConfigProvider.views.maxCache(0);
 
   // 修改post请求默认配置
   $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
@@ -134,7 +134,8 @@ var educationApp = angular.module('education', ['ionic','ngCordova'])
         templateUrl: 'templates/tab-micro-lesson.html',
         controller: 'microLessonCtrl'
       }
-    }
+    },
+    cache:true
   })
   .state('tab.subscribed', {
       url: '/subscribed',
@@ -154,7 +155,8 @@ var educationApp = angular.module('education', ['ionic','ngCordova'])
           templateUrl: 'templates/tab-offline-lesson.html',
           controller: 'offlineLessonCtrl'
         }
-      }
+      },
+      cache:true
     })
   .state('tab.me', {
     url: '/me',
@@ -176,97 +178,116 @@ var educationApp = angular.module('education', ['ionic','ngCordova'])
   .state('area', {
     url: '/area:topicid/:topicname',
     templateUrl: 'templates/area.html',
-    controller: 'areaCtrl'
+    controller: 'areaCtrl',
+    cache: true
   })
   .state('boutiquedetail', {
     url: '/boutiquedetail:videoid',
     templateUrl: 'templates/boutique-details.html',
-    controller: 'boutiquedetailCtrl'
+    controller: 'boutiquedetailCtrl',
+    cache: false
   })
   .state('buyvideo', {
     url: '/buyvideo:videoid',
     templateUrl: 'templates/buyvideo.html',
-    controller: 'buyvideoCtrl'
+    controller: 'buyvideoCtrl',
+    cache: false
   })
   .state('publicdetail', {
     url: '/publicdetail:videoid',
     templateUrl: 'templates/public-details.html',
-    controller: 'publicdetailsCtrl'
+    controller: 'publicdetailsCtrl',
+    cache: false
   })
   .state('subscribdetails', {
     url: '/subscribdetails:teacherid',
     templateUrl: 'templates/subscrib-details.html',
-    controller: 'subscribdetailsCtrl'
+    controller: 'subscribdetailsCtrl',
+    cache: false
   })
   .state('subscribpay', {
     url: '/subscribpay:teacherid',
     templateUrl: 'templates/subscrib-pay.html',
-    controller: 'subscribpayCtrl'
+    controller: 'subscribpayCtrl',
+    cache: false
   })
   .state('officedetails', {
     url: '/officedetails:activityid',
     templateUrl: 'templates/office-details.html',
-    controller: 'officedetailCtrl'
+    controller: 'officedetailCtrl',
+    cache: false
   })
   .state('payactivity', {
     url: 'payactivity/:activityid/:name/:telephone/:company/:job',
     templateUrl: 'templates/pay-activity.html',
-    controller: 'payactivityCtrl'
+    controller: 'payactivityCtrl',
+    cache: false
   })
   .state('binding-phone', {
     url: '/binding-phone',
     templateUrl: 'templates/binding-phone.html',
-    controller: 'bindingPhoneCtrl'
+    controller: 'bindingPhoneCtrl',
+    cache: false
   })
   .state('map', {
     url: '/map:positionx/:positiony',
     templateUrl: 'templates/map.html',
-    controller: 'mapCtrl'
+    controller: 'mapCtrl',
+    cache: false
   })
   .state('registration', {
     url: '/registration:activityid',
     templateUrl: 'templates/registration.html',
-    controller: 'registrationCtrl'
+    controller: 'registrationCtrl',
+    cache: false
   })
   .state('setup', {
     url: '/setup',
     templateUrl: 'templates/setUp.html',
-    controller: 'setUpCtrl'
+    controller: 'setUpCtrl',
+    cache: false
   })
   .state('complaints', {
     url: '/complaints',
     templateUrl: 'templates/complaints.html',
-    controller: 'complaintsCtrl'
+    controller: 'complaintsCtrl',
+    cache: false
   })
   .state('aboutus', {
     url: '/aboutus',
     templateUrl: 'templates/aboutus.html',
-    controller: 'aboutusCtrl'
+    controller: 'aboutusCtrl',
+    cache: true
   })
   .state('collection', {
     url: '/collection',
     templateUrl: 'templates/collection.html',
-    controller: 'collectionCtrl'
+    controller: 'collectionCtrl',
+    cache: false
   })
   .state('personalcenter', {
     url: '/personalcenter',
     templateUrl: 'templates/personalCenter.html',
-    controller: 'personalcenterCtrl'
+    controller: 'personalcenterCtrl',
+    cache: false
   })
   .state('activitydetail', {
     url: '/activitydetail:useractivityid',
     templateUrl: 'templates/activitydetail.html',
-    controller: 'activitydetailCtrl'
+    controller: 'activitydetailCtrl',
+    cache: false
   })
   .state('vip', {
     url: '/vip',
     templateUrl: 'templates/vip.html',
-    controller: 'vipCtrl'
+    controller: 'vipCtrl',
+    cache: false
   })
   .state('payvip', {
     url: '/payvip/:vipid/:name/:telephone/:company/:job/:city',
     templateUrl: 'templates/pay-vip.html',
-    controller: 'payvipCtrl'
+    controller: 'payvipCtrl',
+    cache: false
   });
 
   // if none of the above states are matched, use this as the fallback

@@ -62,7 +62,7 @@ educationApp.controller('payactivityCtrl', ['$scope','Http', 'Popup', '$rootScop
 				    var confirm = Popup.alert("支付成功！");
 				    confirm.then(function () {
 				    	// 这里支付成功后的逻辑是什么
-				    	$state.go("activitydetail",{useractivityid:$scope.subDetailList.id},{reload:true});
+				    	$state.go("activitydetail",{activityorderid:$scope.subDetailList.id},{reload:true});
                    		$ionicViewSwitcher.nextDirection("forward");
 				    });
 

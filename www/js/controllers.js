@@ -6,39 +6,6 @@ educationApp.controller('aboutusCtrl', ['$scope','Http', 'Popup', '$rootScope','
 	    $ionicViewSwitcher.nextDirection("back");
 	};
 }]);
-educationApp.controller('activitydetailCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher) {
-	console.log('报名详情详情控制器');
-	var useractivityId=$stateParams.useractivityid;
-	$scope.activityDetailsInfo = {};
-	
-	// 获取验证码
-	var data = {
-		useractivityid:useractivityId
-	};
-	Http.post('/activity/myactivity.json',data)
-	.success(function (resp) {
-		if (1 === resp.code) {
-			resp.data.activity.imgurl=picBasePath + resp.data.activity.imgurl;
-			$scope.activityDetailsInfo=resp.data;
-		}
-		else if (0 === resp.code) {
-		}
-	})
-	.error(function (resp) {
-		console.log(resp);
-	});
-	// 返回上一页
-	$scope.ionicBack= function () {
-	    $ionicHistory.goBack();
-	    $ionicViewSwitcher.nextDirection("back");
-	};
-	// 活动详情跳转
-	$scope.goOfficeDetails=function(index){
-		$state.go("officedetails",{activityid:index.activity.id},{reload:true});
-		$ionicViewSwitcher.nextDirection("forward");
-	};
-	
-}]);
 educationApp.controller('areaCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher','$timeout', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher,$timeout) {
 	console.log('技术专区控制器');
 	var topicId=$stateParams.topicid;
@@ -288,69 +255,6 @@ educationApp.controller('boutiquedetailCtrl', ['$scope','Http', 'Popup', '$rootS
 			console.log('数据请求失败，请稍后再试！');
 		});
 	};
-	// 分享功能
-	$scope.goShare = function (index) {
-		var data3 = {
-			kind:3,
-			id:index.id
-		};
-		Http.post('/user/unl/share.json', data3)
-		.success(function (data) {
-			console.log(data);
-			if (-1 === data.code) {
-				console.log('用户未登录');
-			}
-			else if (1 === data.code) {
-				$scope.title=data.data.topic;
-				$scope.desc=data.data.info;
-				$scope.url=data.data.jumpurl;
-				$scope.thumb=data.data.imgurl;
-				$ionicActionSheet.show({
-			          buttons: [
-			            { text: '微信朋友圈' },
-			            { text: '微信好友' }
-			          ],
-			          titleText: '分享',
-			          cancelText: '取消',
-			          cancel: function() {
-			               // add cancel code..
-			             },
-			          buttonClicked: function(index) {
-			          	switch (index) {
-			      				case 0:
-			      					$scope.shareViaWechat(1,$scope.title,$scope.desc,$scope.url,$scope.thumb);
-			      					break;
-			      				case 1:
-			      					$scope.shareViaWechat(0,$scope.title,$scope.desc,$scope.url,$scope.thumb);
-			      					break;
-			      			}
-			            return true;
-			          }
-			      });
-			}
-		})
-		.error(function (data) {
-			console.log('数据请求失败，请稍后再试！');
-		});
-	};
-	$scope.shareViaWechat = function(scene,title,desc,url,thumb) {
-	      Wechat.share({
-	        message: {
-	          title: title,
-	          description: desc,
-	          thumb: thumb,
-	          media: {
-	            type: Wechat.Type.WEBPAGE,
-	            webpageUrl: url
-	          }
-	        },
-	        scene: scene // share to Timeline
-	      }, function() {
-	        Popup.alert('分享成功！');
-	      }, function(reason) {
-	        Popup.alert(reason);
-	      });
-    };
 	// 返回上一页
 	$scope.ionicBack= function () {
 		var time=Math.floor(document.getElementById("playVideo").currentTime);
@@ -1459,7 +1363,7 @@ educationApp.controller('microLessonCtrl', ['$scope','Http', 'Popup', '$rootScop
 	$scope.recomList = {};
 	Http.post('/page/unl/choosehotvideo.json')
 	.success(function (resp) {
-		console.log(resp);
+		// console.log(resp);
 		if (1 === resp.code) {
 			var hotvideoList = resp.data.hotvideolist;
 			for (var i = 0; i < hotvideoList.length; i++) {
@@ -1915,69 +1819,6 @@ educationApp.controller('officedetailCtrl', ['$scope','Http', 'Popup', '$rootSco
 			console.log('数据请求失败，请稍后再试！');
 		});
 	};
-	// 分享功能
-	$scope.goShare = function (index) {
-		var data3 = {
-			kind:4,
-			id:index.id
-		};
-		Http.post('/user/unl/share.json', data3)
-		.success(function (data) {
-			// console.log(data);
-			if (-1 === data.code) {
-				console.log('用户未登录');
-			}
-			else if (1 === data.code) {
-				$scope.title=data.data.topic;
-				$scope.desc=data.data.info;
-				$scope.url=data.data.jumpurl;
-				$scope.thumb=data.data.imgurl;
-				$ionicActionSheet.show({
-			          buttons: [
-			            { text: '微信朋友圈' },
-			            { text: '微信好友' }
-			          ],
-			          titleText: '分享',
-			          cancelText: '取消',
-			          cancel: function() {
-			               // add cancel code..
-			             },
-			          buttonClicked: function(index) {
-			          	switch (index) {
-			      				case 0:
-			      					$scope.shareViaWechat(1,$scope.title,$scope.desc,$scope.url,$scope.thumb);
-			      					break;
-			      				case 1:
-			      					$scope.shareViaWechat(0,$scope.title,$scope.desc,$scope.url,$scope.thumb);
-			      					break;
-			      			}
-			            return true;
-			          }
-			      });
-			}
-		})
-		.error(function (data) {
-			console.log('数据请求失败，请稍后再试！');
-		});
-	};
-	$scope.shareViaWechat = function(scene,title,desc,url,thumb) {
-	      Wechat.share({
-	        message: {
-	          title: title,
-	          description: desc,
-	          thumb: thumb,
-	          media: {
-	            type: Wechat.Type.WEBPAGE,
-	            webpageUrl: url
-	          }
-	        },
-	        scene: scene // share to Timeline
-	      }, function() {
-	        Popup.alert('分享成功！');
-	      }, function(reason) {
-	        Popup.alert(reason);
-	      });
-    };
 	// 返回上一页
 	$scope.ionicBack= function () {
 	    $ionicHistory.goBack();
@@ -2109,90 +1950,6 @@ educationApp.controller('offlineLessonCtrl', ['$scope','Http', 'Popup', '$rootSc
             $scope.$broadcast('scroll.refreshComplete');
         });
     };
-}]);
-educationApp.controller('payactivityCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher) {
-	console.log('活动支付');
-	var activityId =　$stateParams.activityid;
-	var mName =　$stateParams.name;
-	var mTelephone =　$stateParams.telephone;
-	var mCompany =　$stateParams.company;
-	var mJob =　$stateParams.job;
-	console.log("activityId " + activityId);
-	console.log("mName " + mName);
-	console.log("mTelephone " + mTelephone);
-	console.log("mCompany " + mCompany);
-	console.log("mJob " + mJob);
-
-
-	$scope.mName = mName;
-	$scope.mTelephone = mTelephone;
-
-	$scope.subDetailList = {};
-	var data = {
-		activityid: activityId,
-		name: mName,
-		telephone: mTelephone,
-		company: mCompany,
-		job: mJob
-	};
-	Http.post('/activity/add.json',data)
-	.success(function (resp) {
-		console.log(resp);
-		if (1 === resp.code) {
-			resp.data.imgurl = picBasePath + resp.data.imgurl;
-			$scope.subDetailList = resp.data;
-		}
-		else if (0 === resp.code) {
-			Popup.alert(resp.reason);
-		}
-		else if (-1 === resp.code) {
-			$state.go('login');
-		}
-	})
-	.error(function (resp) {
-		console.log(resp);
-	});
-
-	$scope.payActivity = function (orderID) {
-		var data = {
-			type: 'wx',
-			orderid: orderID
-		};
-		Http.post('/pay/prepay.json', data)
-		.success(function (resp) {
-			if (1 === resp.code) {
-				var data = resp.data;
-				// 预支付成功
-				var params = {
-				    partnerid: data.partnerid, // merchant id
-				    prepayid: data.prepayid, // prepay id
-				    noncestr: data.noncestr, // nonce
-				    timestamp: data.timestamp, // timestamp
-				    sign: data.sign, // signed string
-				};
-				Wechat.sendPaymentRequest(params, function () {
-				    var confirm = Popup.alert("支付成功！");
-				    confirm.then(function () {
-				    	// 这里支付成功后的逻辑是什么
-				    	$state.go("activitydetail",{useractivityid:$scope.subDetailList.id},{reload:true});
-                   		$ionicViewSwitcher.nextDirection("forward");
-				    });
-
-				}, function (reason) {
-				    Popup.alert("Failed: " + reason);
-				});
-			}
-		})
-		.error(function (){
-			Popup.alert('数据请求失败，请稍后再试');
-		});
-	}
-	
-	// 返回上一页
-	$scope.ionicBack= function () {
-	    $ionicHistory.goBack();
-	    $ionicViewSwitcher.nextDirection("back");
-	};
 }]);
 educationApp.controller('payvipCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher) {
 	console.log('VIP支付');
@@ -2414,118 +2171,6 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
           console.log(resp);
         });
     };
-   // 添加图片
-    $scope.addPhoto = function () {
-        $ionicActionSheet.show({
-            cancelOnStateChange: true,
-            cssClass: 'action_s',
-            titleText: "请选择获取图片方式",
-            buttons: [
-                {text: '相机'},
-                {text: '图库'}
-            ],
-            cancelText: '取消',
-            cancel: function () {
-                return true;
-            },
-            buttonClicked: function (index) {
-
-                switch (index) {
-                    case 0:
-                        $scope.takePhoto();
-                        break;
-                    case 1:
-                        $scope.pickImage();
-                        break;
-                    default:
-                        break;
-                }
-                return true;
-            }
-        });
-    };
-
-    //拍照
-    $scope.takePhoto = function () {
-        var options = {
-            quality: 100,
-            destinationType: Camera.DestinationType.FILE_URI,//Choose the format of the return value.
-            sourceType: Camera.PictureSourceType.CAMERA,//资源类型：CAMERA打开系统照相机；PHOTOLIBRARY打开系统图库
-            targetWidth: 75,//头像宽度
-            targetHeight: 75,//头像高度
-            saveToPhotoAlbum: true
-
-        };
-
-        $cordovaCamera.getPicture(options)
-            .then(function (imageURI) {
-                //Success
-                $scope.userInfo.avatar = imageURI;
-                $scope.uploadPhoto();
-            }, function (err) {
-                // Error
-            });
-    };
-    //选择照片
-    $scope.pickImage = function () {
-        var options = {
-            quality: 100,
-            destinationType: Camera.DestinationType.FILE_URI,//Choose the format of the return value.
-            sourceType: Camera.PictureSourceType.SAVEDPHOTOALBUM,//资源类型：CAMERA打开系统照相机；PHOTOLIBRARY打开系统图库
-            targetWidth: 75,//头像宽度
-            targetHeight: 75//头像高度
-        };
-
-        $cordovaCamera.getPicture(options)
-            .then(function (imageURI) {
-                //Success
-                $scope.userInfo.avatar = imageURI.split('?')[0];
-                $scope.uploadPhoto();
-            }, function (err) {
-                // Error
-            });
-    };
-
-
-    $scope.uploadPhoto = function () {
-        var requestParams = "?callback=JSON_CALLBACK";
-
-        var server = encodeURI('http://101.200.205.162:8889/user/edit.json' + requestParams);
-        var fileURL = $scope.userInfo.avatar;
-        var options = {
-            fileKey: "avatar",//相当于form表单项的name属性
-            fileName: fileURL.substr(fileURL.lastIndexOf('/') + 1),
-            mimeType: "image/jpeg"
-        };
-        //用params保存其他参数，例如昵称，年龄之类
-        // var params = {};
-        // params['avatar'] = $scope.userInfo.avatar;
-        // //把params添加到options的params中
-        // options.params = params;
-        $cordovaFileTransfer.upload(server, fileURL, options)
-        .then(function (result) {
-            // Success!
-            Popup.alert('上传成功');
-            Http.post('/user/mine.json')
-            .success(function (resp) {
-                if (-1 === resp.code) {
-                    // $state.go('login');
-                } else if (1 === resp.code) {
-                    localStorage.removeItem('user');
-                    localStorage.setItem('user', JSON.stringify(resp.data));
-                }
-            })
-            .error(function (resp) {
-                console.log('数据请求失败，请稍后再试！');
-            });
-        }, function (err) {
-            // Error
-            Popup.alert("上传失败: Code = " + error.code);
-        }, function (progress) {
-            // constant progress updates
-        });
-
-    };
 
 
 }]);
@@ -2594,69 +2239,6 @@ educationApp.controller('publicdetailsCtrl', ['$scope','Http', 'Popup', '$rootSc
 			console.log('数据请求失败，请稍后再试！');
 		});
 	};
-	// 分享功能
-	$scope.goShare = function (index) {
-		var data3 = {
-			kind:3,
-			id:index.id
-		};
-		Http.post('/user/unl/share.json', data3)
-		.success(function (data) {
-			console.log(data);
-			if (-1 === data.code) {
-				console.log('用户未登录');
-			}
-			else if (1 === data.code) {
-				$scope.title=data.data.topic;
-				$scope.desc=data.data.info;
-				$scope.url=data.data.jumpurl;
-				$scope.thumb=data.data.imgurl;
-				$ionicActionSheet.show({
-			          buttons: [
-			            { text: '微信朋友圈' },
-			            { text: '微信好友' }
-			          ],
-			          titleText: '分享',
-			          cancelText: '取消',
-			          cancel: function() {
-			               // add cancel code..
-			             },
-			          buttonClicked: function(index) {
-			          	switch (index) {
-			      				case 0:
-			      					$scope.shareViaWechat(1,$scope.title,$scope.desc,$scope.url,$scope.thumb);
-			      					break;
-			      				case 1:
-			      					$scope.shareViaWechat(0,$scope.title,$scope.desc,$scope.url,$scope.thumb);
-			      					break;
-			      			}
-			            return true;
-			          }
-			      });
-			}
-		})
-		.error(function (data) {
-			console.log('数据请求失败，请稍后再试！');
-		});
-	};
-	$scope.shareViaWechat = function(scene,title,desc,url,thumb) {
-	      Wechat.share({
-	        message: {
-	          title: title,
-	          description: desc,
-	          thumb: thumb,
-	          media: {
-	            type: Wechat.Type.WEBPAGE,
-	            webpageUrl: url
-	          }
-	        },
-	        scene: scene // share to Timeline
-	      }, function() {
-	        Popup.alert('分享成功！');
-	      }, function(reason) {
-	        Popup.alert(reason);
-	      });
-    };
 	// 返回上一页
 	$scope.ionicBack= function () {
 		var time=Math.floor(document.getElementById("playVideo").currentTime);
@@ -2723,87 +2305,6 @@ educationApp.controller('publicCtrl', ['$scope','Http', 'Popup', '$rootScope', f
 	.error(function (resp) {
 		console.log(resp);
 	});
-}]);
-educationApp.controller('registrationCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher) {
-    console.log('填写参加人信息');
-    // 获取线下课信息
-    var activityId=$stateParams.activityid;
-    // console.log(activityId);
-    var phoneRe = /^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/;
-    var pwdRe = /^[0-9a-zA-Z_]{6,20}/;
-    var data = {
-        activityid:activityId
-    };
-    Http.post('/page/unl/activitydetail.json',data)
-    .success(function (resp) {
-        console.log(resp);
-        if (1 === resp.code) {
-            $scope.boutiDetailList =resp.data;
-        }
-        else if (0 === resp.code) {
-        }
-    })
-    .error(function (resp) {
-        console.log(resp);
-    });
-    // 返回上一页
-    $scope.ionicBack= function () {
-        $ionicHistory.goBack();
-        $ionicViewSwitcher.nextDirection("back");
-    };
-    function checkParams() {
-        if ($('.company').val() == '') {
-            Popup.alert('请填写有效公司名称！');
-            return -1;
-        }
-        if ($('.profession').val() == '') {
-            Popup.alert('请填写有效职业名称！');
-            return -1;
-        }
-        if ($('.username').val() == '') {
-            Popup.alert('请填写姓名！');
-            return -1;
-        }
-        if (!phoneRe.test($('.userphone').val())) {
-            Popup.alert('手机号无效！');
-            return -1;
-        }
-        return 1;
-    };
-    // 信息填写完毕，跳转到支付页面
-    $scope.goPayOffice = function (username, userphone, Company, Job) {
-         if (-1 === checkParams()) {
-             return;
-         }
-         console.log('跳转支付');
-         if($scope.boutiDetailList.price == '免费'){
-            var data1 = {
-                activityid:activityId,
-                name:$('.username').val(),
-                telephone:$('.userphone').val(),
-                company :$('.company').val(),
-                job:$('.profession').val()
-            };
-            Http.post('/activity/add.json',data1)
-            .success(function (resp) {
-                // console.log(resp);
-                if (1 === resp.code) {
-                   $state.go("activitydetail",{useractivityid:resp.data.id},{reload:true});
-                   $ionicViewSwitcher.nextDirection("forward");
-                }
-                else if (0 === resp.code) {
-                }
-            })
-            .error(function (resp) {
-                console.log(resp);
-            });
-         }else{
-            $state.go('payactivity'
-                ,{activityid:activityId, name:username, telephone:userphone, company:Company, job:Job}
-                ,{reload:true});
-            $ionicViewSwitcher.nextDirection("forward");
-         }
-     };
 }]);
 educationApp.controller('setUpCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','User','$ionicViewSwitcher', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,User,$ionicViewSwitcher) {
 	console.log('设置页面控制器');
@@ -2915,70 +2416,6 @@ educationApp.controller('subscribdetailsCtrl', ['$scope','Http', 'Popup', '$root
 			console.log('数据请求失败，请稍后再试！');
 		});
 	};
-	// 分享功能
-	$scope.goShare = function (index) {
-		var data3 = {
-			kind:2,
-			id:index.id
-		};
-		Http.post('/user/unl/share.json', data3)
-		.success(function (data) {
-			console.log(data);
-			if (-1 === data.code) {
-				console.log('用户未登录');
-			}
-			else if (1 === data.code) {
-				$scope.title=data.data.topic;
-				$scope.desc=data.data.info;
-				$scope.url=data.data.jumpurl;
-				$scope.thumb=data.data.imgurl;
-				$ionicActionSheet.show({
-			          buttons: [
-			            { text: '微信朋友圈' },
-			            { text: '微信好友' }
-			          ],
-			          titleText: '分享',
-			          cancelText: '取消',
-			          cancel: function() {
-			               // add cancel code..
-			             },
-			          buttonClicked: function(index) {
-			          	switch (index) {
-			      				case 0:
-			      					$scope.shareViaWechat(1,$scope.title,$scope.desc,$scope.url,$scope.thumb);
-			      					break;
-			      				case 1:
-			      					$scope.shareViaWechat(0,$scope.title,$scope.desc,$scope.url,$scope.thumb);
-			      					break;
-			      			}
-			            return true;
-			          }
-			      });
-			}
-		})
-		.error(function (data) {
-			console.log('数据请求失败，请稍后再试！');
-		});
-		
-	};
-	$scope.shareViaWechat = function(scene,title,desc,url,thumb) {
-	      Wechat.share({
-	        message: {
-	          title: title,
-	          description: desc,
-	          thumb: thumb,
-	          media: {
-	            type: Wechat.Type.WEBPAGE,
-	            webpageUrl: url
-	          }
-	        },
-	        scene: scene // share to Timeline
-	      }, function() {
-	        Popup.alert('分享成功！');
-	      }, function(reason) {
-	        Popup.alert(reason);
-	      });
-    };
 
 
 	// 付费订阅支付页
