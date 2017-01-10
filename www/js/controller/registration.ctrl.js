@@ -49,7 +49,7 @@ educationApp.controller('registrationCtrl', ['$scope','Http', 'Popup', '$rootSco
          if (-1 === checkParams()) {
              return;
          }
-         console.log('跳转支付');
+         // console.log('跳转支付');
          if($scope.boutiDetailList.price == '免费'){
             var data1 = {
                 activityid:activityId,
@@ -60,7 +60,7 @@ educationApp.controller('registrationCtrl', ['$scope','Http', 'Popup', '$rootSco
             };
             Http.post('/activity/add.json',data1)
             .success(function (resp) {
-                // console.log(resp);
+                console.log(resp);
                 if (1 === resp.code) {
                    $state.go("activitydetail",{useractivityid:resp.data.id},{reload:true});
                    $ionicViewSwitcher.nextDirection("forward");

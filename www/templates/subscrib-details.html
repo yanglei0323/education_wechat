@@ -5,7 +5,6 @@
     	<!-- 视频模块 -->
 		<div class="y-video">
 	        <video ng-src="{{videoUrl(subDetailList.playurl)}}" controls poster="./img/boutique/poster.png" id="playVideo"></video>
-	        <span class="y-share status-bar-offset" ng-click="goShare(subDetailList)"><img src="./img/boutique/share.png" alt=""></span>
 	        <span class="y-collection status-bar-offset" ng-if="!subDetailList.iskeep" ng-click="keepDesigner(subDetailList)"><img src="./img/boutique/collection.png" alt=""></span>
 	        <span class="y-collection status-bar-offset" ng-if="subDetailList.iskeep" ng-click="keepDesigner(subDetailList)"><img src="./img/boutique/k-collection.png" alt=""></span>
 	        <div class="y-endplay">

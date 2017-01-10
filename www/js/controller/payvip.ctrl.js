@@ -1,4 +1,5 @@
-educationApp.controller('payvipCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher) {
+educationApp.controller('payvipCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher', '$ionicLoading',
+	function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher, $ionicLoading) {
 	console.log('VIP支付');
 	var vipId =　$stateParams.vipid;
 	var mName =　$stateParams.name;
@@ -46,35 +47,48 @@ educationApp.controller('payvipCtrl', ['$scope','Http', 'Popup', '$rootScope','$
 
 	$scope.payVIP = function (orderID) {
 		var data = {
-			type: 'wx',
+			type: 'wz',
 			orderid: orderID
 		};
+		$ionicLoading.show({
+			template: '<ion-spinner></ion-spinner>'
+		});
 		Http.post('/pay/prepay.json', data)
 		.success(function (resp) {
+			$ionicLoading.hide();
 			if (1 === resp.code) {
 				var data = resp.data;
 				// 预支付成功
-				var params = {
-				    partnerid: data.partnerid, // merchant id
-				    prepayid: data.prepayid, // prepay id
-				    noncestr: data.noncestr, // nonce
-				    timestamp: data.timestamp, // timestamp
-				    sign: data.sign, // signed string
-				};
-				Wechat.sendPaymentRequest(params, function () {
-				    var confirm = Popup.alert("支付成功！");
-				    confirm.then(function () {
-				    	// 这里支付成功后的逻辑是什么，暂时跳转到我的
-				    	$state.go("vip",{reload:true});
-            			$ionicViewSwitcher.nextDirection("forward");
-				    });
-
-				}, function (reason) {
-				    Popup.alert("Failed: " + reason);
-				});
+				if (WeixinJSBridge) {
+					WeixinJSBridge.invoke(
+				       'getBrandWCPayRequest', {
+				           "appId": data.appId,     //公众号名称，由商户传入     
+				           "timeStamp": data.timeStamp.toString(),         //时间戳，自1970年以来的秒数     
+				           "nonceStr": data.nonceStr, //随机串     
+				           "package": data.package,     
+				           "signType": data.signType,         //微信签名方式    
+				           "paySign": data.paySign //微信签名 
+				       },
+				       function(res) {
+				           if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+				               // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+				               var confirm = Popup.alert('支付成功');
+				               confirm.then(function () {
+							    	// 支付成功后返回订阅列表
+							    	$state.go("vip",{reload:true});
+			            			$ionicViewSwitcher.nextDirection("forward");
+							   });
+				           }
+				           else {
+				               Popup.alert('支付失败' + res.err_msg);
+				           }
+				       }
+				   );
+				}
 			}
 		})
-		.error(function (){
+		.error(function () {
+			$ionicLoading.hide();
 			Popup.alert('数据请求失败，请稍后再试');
 		});
 	}
