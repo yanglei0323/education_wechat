@@ -10,3 +10,6 @@ resources
 /www/lib/angular-sanitize
 /www/lib/angular-animate
 /www/lib/angular
+/www/js/controllers.js
+/www/js/services.js
+/www/css/ionic.app.css
