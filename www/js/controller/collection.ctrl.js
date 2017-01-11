@@ -14,6 +14,28 @@ educationApp.controller('collectionCtrl', ['$scope','Http', 'Popup', '$rootScope
         $ionicHistory.goBack();
         $ionicViewSwitcher.nextDirection("back");
     };
+    // 判断显示状态
+    var collectionTab=JSON.parse(sessionStorage.getItem('collectionTab'));
+    if(collectionTab == null){
+    }else{
+        $('.coll-tab-item').removeClass("coll-tab-active");
+        $('.coll-tab-item-'+collectionTab).addClass("coll-tab-active");
+        $('.y-collection-content').css({'display':'none'});
+        $('.y-collection-content-'+collectionTab).css({'display':'block'});
+        if(collectionTab == 1){
+            $scope.scrollNum1=true;
+            $scope.scrollNum2=false;
+            $scope.scrollNum3=false;
+        }else if(collectionTab == 2){
+            $scope.scrollNum1=false;
+            $scope.scrollNum2=true;
+            $scope.scrollNum3=false;
+        }else if(collectionTab == 3){
+            $scope.scrollNum1=false;
+            $scope.scrollNum2=false;
+            $scope.scrollNum3=true;
+        }
+    }
     // 获取收藏记录(1专栏)
     $scope.columnList=[];
     var page=1;
@@ -242,6 +264,7 @@ educationApp.controller('collectionCtrl', ['$scope','Http', 'Popup', '$rootScope
         $('.coll-tab-item-'+index).addClass("coll-tab-active");
         $('.y-collection-content').css({'display':'none'});
         $('.y-collection-content-'+index).css({'display':'block'});
+        sessionStorage.setItem('collectionTab',index);
         if(index == 1){
             $scope.scrollNum1=true;
             $scope.scrollNum2=false;
