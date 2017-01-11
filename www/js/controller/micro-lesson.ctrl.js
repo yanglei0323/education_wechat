@@ -193,7 +193,7 @@ educationApp.controller('microLessonCtrl', ['$scope','Http', 'Popup', '$rootScop
 		console.log(resp);
 	});
 	$scope.goBoutiDetail=function(data){
-		$state.go("boutiquedetail",{videoid:data.id},{reload:true});
+		$state.go("boutiquedetail",{videoid:data.id}, {reload:true});
 		$ionicViewSwitcher.nextDirection("forward");
 	};
 

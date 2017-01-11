@@ -17,11 +17,6 @@ var educationApp = angular.module('education', ['ionic','ngCordova'])
       cordova.plugins.Keyboard.disableScroll(true);
 
     }
-    if (window.StatusBar) {
-      // org.apache.cordova.statusbar required
-      StatusBar.styleDefault();
-      StatusBar.overlaysWebView(false);
-    }
 
     // 微信授权登录后获取code
     (function wechatAuth() {
