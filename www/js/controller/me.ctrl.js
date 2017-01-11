@@ -103,7 +103,7 @@ educationApp.controller('meCtrl',
                 // console.log(userInfo);
                 $scope.userInfo=userInfo;
                 // 头像
-                if(userInfo.avatar == ''){
+                if(userInfo.avatar == '' || userInfo.avatar == null){
                     userInfo.avatar ='./img/head-none.png';
                 }else{
                     userInfo.avatar=picBasePath + userInfo.avatar;

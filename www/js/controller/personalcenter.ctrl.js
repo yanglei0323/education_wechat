@@ -136,7 +136,7 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
     wx.config({
       debug: false,
       appId: 'wxef3e1498e754b61d',
-      timestamp: ,
+      timestamp: '',
       nonceStr: '',
       signature: '',
       jsApiList: [

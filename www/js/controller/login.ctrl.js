@@ -89,7 +89,6 @@ educationApp.controller('loginCtrl',
 
 		}, function (reason) {
 			Popup.alert('Failed：' + reason);
-		    alert("Failed: " + reason);
 		});
 
 		

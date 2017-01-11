@@ -79,6 +79,10 @@ $graybg: #ececec;
 	}
 	.y-densigner-name{
 		bottom:27px;
+		width: 110px;
+	    overflow: hidden;
+	    text-overflow: ellipsis;
+	    white-space: nowrap;
 	}
 	.y-densigner-price{
 		bottom:7px;
