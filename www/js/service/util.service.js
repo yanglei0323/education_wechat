@@ -1,13 +1,13 @@
-educationApp.factory('Util', ['Http', '$window','Popup', function (Http, $window,Popup) {
+educationApp.factory('Util', ['Http', '$window', function (Http, $window) {
+	
 	return {
 		setWxConfig: function () {
 			var data = {
 				url: $window.location.href
 			};
-			console.log(data);
 			Http.post('/user/unl/wzinfo.json', data)
 			.success(function (resp) {
-				// console.log(resp);
+				console.log(resp);
 				if (1 === resp.code) {
 					var wxConfig = resp.data;
 					wx.config({
@@ -19,7 +19,8 @@ educationApp.factory('Util', ['Http', '$window','Popup', function (Http, $window
 					    jsApiList: [
 					    	'chooseImage',
 				            'uploadImage',
-				            'downloadImage'
+				            'downloadImage',
+				            'chooseWXPay'
 					    ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
 					});
 				}

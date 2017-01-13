@@ -1,5 +1,12 @@
-educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicActionSheet','$ionicViewSwitcher','$cordovaImagePicker','$cordovaCamera','$cordovaFileTransfer','Util', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicActionSheet,$ionicViewSwitcher,$cordovaImagePicker,$cordovaCamera,$cordovaFileTransfer,Util) {
+educationApp.controller('personalcenterCtrl',
+  ['$timeout', '$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicActionSheet','$ionicViewSwitcher','$cordovaImagePicker','$cordovaCamera','$cordovaFileTransfer','Util',
+  function ($timeout, $scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicActionSheet,$ionicViewSwitcher,$cordovaImagePicker,$cordovaCamera,$cordovaFileTransfer,Util) {
   console.log('个人中心控制器');
+
+    $timeout(function () {
+        Util.setWxConfig();
+    });
+
   // 获取个人信息
     var userInfo=JSON.parse(localStorage.getItem('user'));
     if(userInfo.avatar == ''){
@@ -103,7 +110,7 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
       $('.job-input').bind('input propertychange', function() {
          userInfo.job = $(".job-input").val();
       });
-      Util.setWxConfig();
+      
    },2000);
     // 保存个人信息
     $scope.goSaveInfo= function () {
@@ -133,23 +140,6 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
         });
     };
 
-    // -----------------------------------------------------------------------
-    setTimeout(function(){
-      Util.setWxConfig();
-   },1000);
-    wx.ready(function () {
-        // 在这里调用 API
-        wx.checkJsApi({
-          jsApiList: [
-            'chooseImage',
-            'uploadImage',
-            'downloadImage'
-          ],
-          success: function (res) {
-            console.log(JSON.stringify(res));
-          }
-        });
-    });
     // 点击头像
     $scope.localId = [];
     $scope.addPhoto= function () {
