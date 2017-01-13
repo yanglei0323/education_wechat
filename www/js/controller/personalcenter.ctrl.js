@@ -134,7 +134,9 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
     };
 
     // -----------------------------------------------------------------------
-    
+    setTimeout(function(){
+      Util.setWxConfig();
+   },1000);
     wx.ready(function () {
         // 在这里调用 API
         wx.checkJsApi({
@@ -167,7 +169,7 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
                   return false;
               }
    
-              $scope.userInfo.avatar=$scope.localId[0];
+              
               // 上传图片
               function upload() {
                 wx.uploadImage({
@@ -180,25 +182,26 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
                             serverId: $scope.serverId, // 需要下载的图片的服务器端ID，由uploadImage接口获得
                             isShowProgressTips: 1, // 默认为1，显示进度提示
                             success: function (res) {
-                                var localId = res.localId; // 返回图片下载后的本地ID
+                                var downId = res.localId; // 返回图片下载后的本地ID
+                                $scope.userInfo.avatar=downId;
                                 // 上传到自己的服务器
-                                var dataAvatar = {
-                                  avatar:localId,
-                                };
-                                Http.post('/user/edit.json',dataAvatar)
-                                .success(function (resp) {
-                                  if (1 === resp.code) {
-                                    // 更新用户信息
-                                    localStorage.removeItem('user');
-                                    localStorage.setItem('user', JSON.stringify(resp.data));
-                                    Popup.alert('修改头像成功！');
-                                  }
-                                  else if (0 === resp.code) {
-                                  }
-                                })
-                                .error(function (resp) {
-                                  console.log(resp);
-                                });
+                                // var dataAvatar = {
+                                //   avatar:downId,
+                                // };
+                                // Http.post('/user/edit.json',dataAvatar)
+                                // .success(function (resp) {
+                                //   if (1 === resp.code) {
+                                //     // 更新用户信息
+                                //     localStorage.removeItem('user');
+                                //     localStorage.setItem('user', JSON.stringify(resp.data));
+                                //     Popup.alert('修改头像成功！');
+                                //   }
+                                //   else if (0 === resp.code) {
+                                //   }
+                                // })
+                                // .error(function (resp) {
+                                //   console.log(resp);
+                                // });
                             }
                         });
                     },

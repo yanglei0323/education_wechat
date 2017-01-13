@@ -1,13 +1,13 @@
-educationApp.factory('Util', ['Http', '$window', function (Http, $window) {
-	
+educationApp.factory('Util', ['Http', '$window','Popup', function (Http, $window,Popup) {
 	return {
 		setWxConfig: function () {
 			var data = {
-				url: 'http://api.yueyishujia.com/education/www/personalcenter'
+				url: $window.location.href
 			};
+			console.log(data);
 			Http.post('/user/unl/wzinfo.json', data)
 			.success(function (resp) {
-				console.log(resp);
+				// console.log(resp);
 				if (1 === resp.code) {
 					var wxConfig = resp.data;
 					wx.config({
