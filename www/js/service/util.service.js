@@ -1,6 +1,19 @@
 educationApp.factory('Util', ['Http', '$window', function (Http, $window) {
 	
 	return {
+		payParams: {},
+		getPayParams: function ()  {
+			return this.payParams;
+		},
+		setPayParams: function (activityId, name, telephone, company, job) {
+			this.payParams = {
+				activityId: activityId,
+				name: name,
+				telephone: telephone,
+				company: company,
+				job: job
+			};
+		},
 		setWxConfig: function () {
 			var data = {
 				url: $window.location.href

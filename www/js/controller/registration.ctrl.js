@@ -1,4 +1,6 @@
-educationApp.controller('registrationCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher) {
+educationApp.controller('registrationCtrl',
+    ['Util', '$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicViewSwitcher',
+    function (Util, $scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicViewSwitcher) {
     console.log('填写参加人信息');
     // 获取线下课信息
     var activityId=$stateParams.activityid;
@@ -72,9 +74,8 @@ educationApp.controller('registrationCtrl', ['$scope','Http', 'Popup', '$rootSco
                 console.log(resp);
             });
          }else{
-            $state.go('payactivity'
-                ,{activityid:activityId, name:username, telephone:userphone, company:Company, job:Job}
-                ,{reload:true});
+            Util.setPayParams(activityId, username, userphone, Company, Job);
+            $state.go('payactivity', {}, {reload:true});
             $ionicViewSwitcher.nextDirection("forward");
          }
      };

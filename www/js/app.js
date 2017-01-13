@@ -213,7 +213,7 @@ var educationApp = angular.module('education', ['ionic','ngCordova'])
     cache: false
   })
   .state('payactivity', {
-    url: 'payactivity/:activityid/:name/:telephone/:company/:job',
+    url: '/payactivity',
     templateUrl: 'templates/pay-activity.html',
     controller: 'payactivityCtrl',
     cache: false
@@ -279,7 +279,7 @@ var educationApp = angular.module('education', ['ionic','ngCordova'])
     cache: false
   })
   .state('payvip', {
-    url: '/payvip/:vipid/:name/:telephone/:company/:job/:city',
+    url: '/payvip',
     templateUrl: 'templates/pay-vip.html',
     controller: 'payvipCtrl',
     cache: false
