@@ -3,7 +3,7 @@ educationApp.factory('Util', ['Http', '$window', function (Http, $window) {
 	return {
 		setWxConfig: function () {
 			var data = {
-				url: $window.location.href;
+				url: 'http://api.yueyishujia.com/education/www/personalcenter'
 			};
 			Http.post('/user/unl/wzinfo.json', data)
 			.success(function (resp) {
@@ -16,7 +16,11 @@ educationApp.factory('Util', ['Http', '$window', function (Http, $window) {
 					    timestamp: wxConfig.timestamp.toString(), // 必填，生成签名的时间戳
 					    nonceStr: wxConfig.noncestr, // 必填，生成签名的随机串
 					    signature: wxConfig.signature,// 必填，签名，见附录1
-					    jsApiList: [] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+					    jsApiList: [
+					    	'chooseImage',
+				            'uploadImage',
+				            'downloadImage'
+					    ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
 					});
 				}
 			})

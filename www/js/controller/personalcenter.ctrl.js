@@ -1,4 +1,4 @@
-educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicActionSheet','$ionicViewSwitcher','$cordovaImagePicker','$cordovaCamera','$cordovaFileTransfer', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicActionSheet,$ionicViewSwitcher,$cordovaImagePicker,$cordovaCamera,$cordovaFileTransfer) {
+educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootScope','$state','$stateParams','$ionicHistory','$ionicActionSheet','$ionicViewSwitcher','$cordovaImagePicker','$cordovaCamera','$cordovaFileTransfer','Util', function ($scope,Http, Popup, $rootScope,$state,$stateParams,$ionicHistory,$ionicActionSheet,$ionicViewSwitcher,$cordovaImagePicker,$cordovaCamera,$cordovaFileTransfer,Util) {
   console.log('个人中心控制器');
   // 获取个人信息
     var userInfo=JSON.parse(localStorage.getItem('user'));
@@ -103,6 +103,7 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
       $('.job-input').bind('input propertychange', function() {
          userInfo.job = $(".job-input").val();
       });
+      Util.setWxConfig();
    },2000);
     // 保存个人信息
     $scope.goSaveInfo= function () {
@@ -133,19 +134,7 @@ educationApp.controller('personalcenterCtrl', ['$scope','Http', 'Popup', '$rootS
     };
 
     // -----------------------------------------------------------------------
-    wx.config({
-      debug: false,
-      appId: 'wxef3e1498e754b61d',
-      timestamp: '',
-      nonceStr: '',
-      signature: '',
-      jsApiList: [
-        // 所有要调用的 API 都要加到这个列表中
-        'chooseImage',
-        'uploadImage',
-        'downloadImage'
-      ]
-    });
+    
     wx.ready(function () {
         // 在这里调用 API
         wx.checkJsApi({

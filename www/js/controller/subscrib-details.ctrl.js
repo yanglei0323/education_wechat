@@ -107,7 +107,7 @@ educationApp.controller('subscribdetailsCtrl', ['$scope','Http', 'Popup', '$root
 					// 存储观看记录
 					var dataTime = {
 						type:0,
-						id:$scope.subDetailList.id,
+						id:$scope.columnId,
 						time:time
 					};
 					// console.log(dataTime);
@@ -164,7 +164,7 @@ educationApp.controller('subscribdetailsCtrl', ['$scope','Http', 'Popup', '$root
 			// 存储观看记录
 			var dataTime = {
 				type:0,
-				id:$scope.subDetailList.id,
+				id:$scope.columnId,
 				time:time
 			};
 			// console.log(dataTime);
@@ -186,6 +186,7 @@ educationApp.controller('subscribdetailsCtrl', ['$scope','Http', 'Popup', '$root
 	// 课程目录跳转
 	$scope.playVideoId=0;
 	$scope.indexNum='';
+	$scope.columnId='';
 	var video = document.getElementById("playVideo");
 	// 视频播放状态监听,将状态赋给课程目录中的元素
 	$timeout(function(){
@@ -218,6 +219,7 @@ educationApp.controller('subscribdetailsCtrl', ['$scope','Http', 'Popup', '$root
 				return;
 			}else{
 				$scope.videoInfo={};
+				$scope.columnId=index.id;
 				// 获取视频地址，自动播放（第一次播放此视频执行）
 				var data1 = {
 					columnid:index.id

@@ -39,7 +39,7 @@
           <div class="learnImg-info" ng-bind="studyInfo.alreadytimes"></div>
           <div class="learn-info">
             <span class="learn-name"><span ng-bind="studyInfo.scolumn.name"></span></span>
-            <span class="learn-detail">剩余：<span ng-bind="studyInfo.scolumn.timelongs"></span><span class="y-ml-15">第<span ng-bind="studyInfo.scolumn.number"></span>集/共<span ng-bind="studyInfo.scolumn.totalnum"></span>集</span></span>
+            <span class="learn-detail">时长：<span ng-bind="studyInfo.scolumn.timelongs"></span><span class="y-ml-15">第<span ng-bind="studyInfo.scolumn.number"></span>集/共<span ng-bind="studyInfo.scolumn.totalnum"></span>集</span></span>
           </div>
         </div>
         <div class="y-personInfo" ng-repeat="studyInfo in studyVideoList" ng-click="goBoutiDetail(studyInfo.video)">
