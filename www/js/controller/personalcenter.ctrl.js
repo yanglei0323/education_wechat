@@ -153,56 +153,42 @@ educationApp.controller('personalcenterCtrl',
                   Popup.alert('请选择图片!');
                   return false;
               }
-              if($scope.localId.length > 1) {
-                  Popup.alert('修改头像不支持多张图片,请重新上传');
-                  $scope.localId = [];
-                  return false;
-              }
-   
-              
-              // 上传图片
-              function upload() {
-                wx.uploadImage({
-                    localId: $scope.localId[0],
-                    isShowProgressTips: 1, // 默认为1，显示进度提示
-                    success: function (res) {
-                        $scope.serverId=res.serverId;
-                        // 下载图片
-                        wx.downloadImage({
-                            serverId: $scope.serverId, // 需要下载的图片的服务器端ID，由uploadImage接口获得
-                            isShowProgressTips: 1, // 默认为1，显示进度提示
-                            success: function (res) {
-                                var downId = res.localId; // 返回图片下载后的本地ID
-                                $scope.userInfo.avatar=downId;
-                                // 上传到自己的服务器
-                                // var dataAvatar = {
-                                //   avatar:downId,
-                                // };
-                                // Http.post('/user/edit.json',dataAvatar)
-                                // .success(function (resp) {
-                                //   if (1 === resp.code) {
-                                //     // 更新用户信息
-                                //     localStorage.removeItem('user');
-                                //     localStorage.setItem('user', JSON.stringify(resp.data));
-                                //     Popup.alert('修改头像成功！');
-                                //   }
-                                //   else if (0 === resp.code) {
-                                //   }
-                                // })
-                                // .error(function (resp) {
-                                //   console.log(resp);
-                                // });
-                            }
-                        });
-                    },
-                    fail: function (res) {
-                        Popup.alert('上传失败！');
-                    }
-                });
-              }
+              // if($scope.localId.length > 1) {
+              //     Popup.alert('修改头像不支持多张图片,请重新上传');
+              //     $scope.localId = [];
+              //     return false;
+              // }
               upload();
           }
       });
     };
+
+    // 上传图片
+    function upload() {
+      wx.uploadImage({
+          localId: $scope.localId[0],
+          isShowProgressTips: 1, // 默认为1，显示进度提示
+          success: function (res) {
+              $scope.serverId = res.serverId;
+              var data = {
+                  mediaid: $scope.serverId
+              };
+              Http.post('/user/edit.json', data)
+              .success(function (resp) {
+                  Popup.alert(JSON.stringify(resp));
+                  if (1 === resp.code) {
+                      localStorage.setItem('user', JSON.stringify(resp.data));
+                      Popup.alert('头像保存成功');
+                  }
+              })
+              .error(function () {
+                  Popup.alert('数据请求失败，请稍后再试');
+              });
+          },
+          fail: function (res) {
+              Popup.alert('上传失败！');
+          }
+      });
+    }
 
 }]);
