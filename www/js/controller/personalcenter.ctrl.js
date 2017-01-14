@@ -179,6 +179,8 @@ educationApp.controller('personalcenterCtrl',
                   if (1 === resp.code) {
                       localStorage.setItem('user', JSON.stringify(resp.data));
                       Popup.alert('头像保存成功');
+                      $state.go("tab.me",{reload:true});
+                      $ionicViewSwitcher.nextDirection("forward");
                   }
               })
               .error(function () {
