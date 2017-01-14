@@ -27,7 +27,8 @@ educationApp.controller('personalcenterCtrl',
     $scope.showSexSelect=false;
   // 返回上一页
   $scope.ionicBack= function () {
-      $ionicHistory.goBack();
+      // $ionicHistory.goBack();
+      window.history.back();
       $ionicViewSwitcher.nextDirection("back");
   };
   // 性别选择
@@ -175,12 +176,14 @@ educationApp.controller('personalcenterCtrl',
               };
               Http.post('/user/edit.json', data)
               .success(function (resp) {
-                  Popup.alert(JSON.stringify(resp));
                   if (1 === resp.code) {
                       localStorage.setItem('user', JSON.stringify(resp.data));
-                      Popup.alert('头像保存成功');
-                      $state.go("tab.me",{reload:true});
-                      $ionicViewSwitcher.nextDirection("forward");
+                      var confirm = Popup.alert('头像保存成功');
+                      confirm.then(function () {
+                          $state.go("tab.me", {reload:true});
+                          $ionicViewSwitcher.nextDirection("forward");
+                      });
+                      
                   }
               })
               .error(function () {

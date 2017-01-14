@@ -41,7 +41,9 @@ educationApp.controller('meCtrl',
     // 个人中心跳转
     $scope.goPerCenter=function(){
         if($scope.isLogin) {
-            $state.go("personalcenter",{reload:true});
+            // 用$state.go在ios上一直提示errmsg: invalid signature，超级无语
+            window.location.href = '/education/www/personalcenter';
+            // $state.go("personalcenter");
             $ionicViewSwitcher.nextDirection("forward");
         } else {
             Popup.alert( $scope.noLoginAlert);

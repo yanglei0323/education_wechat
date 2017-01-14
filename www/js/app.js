@@ -43,6 +43,7 @@ var educationApp = angular.module('education', ['ionic','ngCordova'])
                 url: '/sns/oauth2/access_token',
                 type: 'GET',
                 data: data,
+                async: false,
                 success: function (resp) {
                     resp = JSON.parse(resp);
                     if (resp.errcode) {
